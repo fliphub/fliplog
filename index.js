@@ -147,7 +147,7 @@ class LogChain extends ChainedMapExtendable {
 
   new(hardReset = false) {
     // if using hard reset, do not inherit
-    const logChain = new LogChain(hardReset ? null : parent)
+    const logChain = new LogChain(hardReset ? null : this)
 
     // so we can extend without reassigning function name
     delete logChain.name
@@ -359,7 +359,7 @@ class LogChain extends ChainedMapExtendable {
     opts = Object.assign(defaults, opts)
 
     const prettyjson = require('prettyjson')
-    const prettified = prettyjson.render(data, )
+    const prettified = prettyjson.render(data, opts)
     return this.data(prettified)
   }
 

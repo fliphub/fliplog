@@ -1,6 +1,6 @@
 {
   "name": "fliplog",
-  "version": "0.1.11",
+  "version": "0.1.14",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [
@@ -35,7 +35,7 @@
     "test": "node examples && node test"
   },
   "engines": {
-    "node": ">= 7.7.3",
+    "node": ">= 7.7.4",
     "npm": ">= 4.1.2"
   },
   "dependencies": {
@@ -50,7 +50,6 @@
     "lodash.clonedeep": "4.5.0",
     "deep-diff": "0.3.4",
     "cli-table2": "^0.2.0",
-    "cli-spinner": "0.2.6",
     "lodash.padend": "4.6.1",
     "progress": "1.1.8",
     "javascript-stringify": "^1.6.0",

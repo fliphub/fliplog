@@ -1,0 +1,26 @@
+{
+  "name": "izz-class",
+  "version": "0.0.3",
+  "main": "index.js",
+  "description": "is type shorthands for fliphub - mini package with just class",
+  "keywords": [
+    "helpers",
+    "utils",
+    "typeof",
+    "fliphub",
+    "flipbox",
+    "is",
+    "izz",
+    "is-class",
+    "type"
+  ],
+  "author": "James <aretecode@gmail.com>",
+  "homepage": "https://github.com/fliphub/fliphub#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fliphub/fliphub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fliphub/fliphub/issues"
+  }
+}
