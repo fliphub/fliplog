@@ -24,7 +24,7 @@
   ],
   "files": [
     "index.js",
-    "emoji-by-name.js"
+    "emoji-by-name.js",
     "filter.js",
     "progress.js",
     "Spinner.js",
@@ -57,12 +57,12 @@
     "prettyjson": "1.2.1"
   },
   "author": "James <aretecode@gmail.com>",
-  "homepage": "https://github.com/flip-box/fliphub#readme",
+  "homepage": "https://github.com/fliphub/fliplog",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flip-box/fliphub.git"
+    "url": "git+https://github.com/fliphub/fliplog.git"
   },
   "bugs": {
-    "url": "https://github.com/flip-box/fliphub/issues"
+    "url": "https://github.com/fliphub/fliplog/issues"
   }
 }
