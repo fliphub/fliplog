@@ -1,6 +1,10 @@
 # ⛓🔈 fliplog
 > fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets
 
+[![NPM version][npm-image]][npm-url]
+[![MIT License][license-image]][license-url]
+[![fliphub][gitter-badge]][gitter-url]
+
 ![Screenshot](https://cloud.githubusercontent.com/assets/4022631/24160506/46c47d34-0e1f-11e7-8c27-4b653330ae02.png)
 
 
@@ -150,7 +154,7 @@ log
 ```
 
 ### xterm
-![cli-colors](https://cloud.githubusercontent.com/assets/4022631/24438774/9fb02eae-13fe-11e7-9469-bc7e432091f8.png)
+![cli-colors](https://cloud.githubusercontent.com/assets/4022631/24440335/7edf540c-1408-11e7-8d3b-b460d794f3b0.png)
 
 all [cli-color](https://www.npmjs.com/package/cli-color) are available by calling `.xterm`
 
@@ -415,3 +419,12 @@ log
 - to file,
 - to stream
 - middleware alongside .return
+
+[npm-image]: https://img.shields.io/npm/v/fliplog.svg
+[npm-url]: https://npmjs.org/package/fliplog
+[standard-image]: https://img.shields.io/badge/code%20style-standard%2Bes6+-brightgreen.svg
+[standard-url]: https://github.com/aretecode/eslint-config-aretecode
+[license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-url]: https://spdx.org/licenses/MIT
+[gitter-badge]: https://img.shields.io/gitter/room/fliphub/pink.svg
+[gitter-url]: https://gitter.im/fliphub/Lobby
