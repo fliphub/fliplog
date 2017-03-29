@@ -16,43 +16,43 @@ const log = require('fliplog')
 
 
 ## 📋 legend:
-- [basics][#-basics]
-- [stringifying][#stringifying]
-  - [json][#json]
-  - [stringify][#-stringify]
-- [silencing][#-silencing]
-  - [capture all][#capture-all]
-  - [return formatted values][#return]
-  - [return values][#return]
-- [color][#-color]
-  - [chalk][#chalk]
-  - [shorthands][#shorthands]
-  - [xterm][#xterm]
-- [function][#function]
-- [emoji][#emoji]
-- [filtering][#-filtering]
-  - [.filter][#filter-and-tags]
-  - [.tags][#filter-and-tags]
-- [.quick][#-quick]
-- [.table][#-tables]
-  - [.diff][#-diff]
-  - [.row][#row]
-- [.diff][#diff]
-- [spinner][#-spinner]
-- [stack traces][#-stack-traces]
-- [finding logs][#-find-logs]
-- [catch errors][#-catch-errors]
-- [trace][#trace]
-- [clear][#-clear]
-- [deep][#-deep]
-  - [verbose vs tosource][#vs]
-  - [verbose][#verbose]
-  - [tosource][#tosource]
-- [presets][#-presets]
-  - [add your own][#add-your-own]
-  - [use built ins][#use-built-ins]
-- [timestamps][#-timestamps]
-- [from][#from]
+- [basics](#-basics)
+- [stringifying](#stringifying)
+  - [json](#json)
+  - [stringify](#-stringify)
+- [silencing](#-silencing)
+  - [capture all](#capture-all)
+  - [return formatted values](#return)
+  - [return values](#return)
+- [color](#-color)
+  - [chalk](#chalk)
+  - [shorthands](#shorthands)
+  - [xterm](#xterm)
+- [function](#function)
+- [emoji](#emoji)
+- [filtering](#-filtering)
+  - [.filter](#filter-and-tags)
+  - [.tags](#filter-and-tags)
+- [.quick](#-quick)
+- [.table](#-tables)
+  - [.diff](#-diff)
+  - [.row](#row)
+- [.diff](#diff)
+- [spinner](#-spinner)
+- [stack traces](#-stack-traces)
+- [finding logs](#-find-logs)
+- [catch errors](#-catch-errors)
+- [trace](#trace)
+- [clear](#-clear)
+- [deep](#-deep)
+  - [verbose vs tosource](#vs)
+  - [verbose](#verbose)
+  - [tosource](#tosource)
+- [presets](#-presets)
+  - [add your own](#add-your-own)
+  - [use built ins](#use-built-ins)
+- [timestamps](#-timestamps)
+- [from](#from)
 
 
 

@@ -24,6 +24,10 @@
   ],
   "files": [
     "index.js",
+    "emoji-by-name.js"
+    "filter.js",
+    "progress.js",
+    "Spinner.js",
     "examples.js",
     "debugFor.js"
   ],
