@@ -1,0 +1,64 @@
+{
+  "name": "fliplog",
+  "version": "0.1.11",
+  "main": "index.js",
+  "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
+  "keywords": [
+    "fluent",
+    "debug",
+    "logging",
+    "deep-diff",
+    "deep",
+    "emoji",
+    "stack-trace",
+    "spinner",
+    "progress-bars",
+    "filter",
+    "tags",
+    "colors",
+    "tables",
+    "capture",
+    "output",
+    "presets",
+    "arithmetics"
+  ],
+  "files": [
+    "index.js",
+    "examples.js",
+    "debugFor.js"
+  ],
+  "scripts": {
+    "test": "node examples && node test"
+  },
+  "engines": {
+    "node": ">= 7.7.3",
+    "npm": ">= 4.1.2"
+  },
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "cli-color": "^1.2.0",
+    "flipchain": "*",
+    "to-arr": "*",
+    "inspector-gadget": "*",
+    "expose-hidden": "*",
+    "pretty-error": "^2.0.2",
+    "tosource": "^1.0.0",
+    "lodash.clonedeep": "4.5.0",
+    "deep-diff": "0.3.4",
+    "cli-table2": "^0.2.0",
+    "cli-spinner": "0.2.6",
+    "lodash.padend": "4.6.1",
+    "progress": "1.1.8",
+    "javascript-stringify": "^1.6.0",
+    "prettyjson": "1.2.1"
+  },
+  "author": "James <aretecode@gmail.com>",
+  "homepage": "https://github.com/flip-box/fliphub#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flip-box/fliphub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/flip-box/fliphub/issues"
+  }
+}
