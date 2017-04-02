@@ -1,4 +1,4 @@
-const log = require('./')
+const log = require('../')
 
 // log.capture()
 // console.log('eh out')

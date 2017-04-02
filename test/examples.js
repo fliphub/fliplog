@@ -1,4 +1,4 @@
-const log = require('./')
+const log = require('../')
 
 // examples
 log.preset('error').data(new Error('prettyfull!')).echo()

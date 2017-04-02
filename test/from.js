@@ -1,4 +1,4 @@
-const log = require('./')
+const log = require('../')
 
 // console.log(log)
 // log('???function...').echo()
