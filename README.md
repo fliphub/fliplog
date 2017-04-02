@@ -20,47 +20,57 @@ const log = require('fliplog')
 
 
 ## 📋 legend:
-- [basics](#-basics)
-- [stringifying](#stringifying)
+- [👋 basics](#-basics)
+- [🎀 stringifying](#stringifying)
   - [json](#json)
   - [stringify](#-stringify)
-- [silencing](#-silencing)
+- [🙊 silencing](#-silencing)
   - [capture all](#capture-all)
   - [return formatted values](#return)
   - [return values](#return)
-- [color](#-color)
+- [🎨 color](#-color)
   - [chalk](#chalk)
   - [shorthands](#shorthands)
   - [xterm](#xterm)
 - [function](#function)
-- [emoji](#emoji)
-- [filtering](#-filtering)
+- [😊 emoji](#emoji)
+- [☕ filtering](#-filtering)
   - [.filter](#filter-and-tags)
   - [.tags](#filter-and-tags)
-- [.quick](#-quick)
-- [.table](#-tables)
-  - [.diff](#-diff)
+- [⏲ .quick](#-quick)
+- [⬛ .table](#-tables)
+- [⚖️ .diff](#-diff)
   - [.row](#row)
-- [.diff](#diff)
-- [spinner](#-spinner)
-- [stack traces](#-stack-traces)
-- [finding logs](#-find-logs)
-- [catch errors](#-catch-errors)
+  - [.diffs](#diff)
+- [🌀 spinner](#-spinner)
+  - [ora](#-spinner)
+- [📈 progress](#-progress)
+- [🛎 notify](#-notify)
+- [🗺 stack traces](#-stack-traces)
+- [🔎 finding logs](#-find-logs)
+- [⚾ catch errors](#-catch-errors)
 - [trace](#trace)
-- [clear](#-clear)
-- [deep](#-deep)
+- [🆑 clear](#-clear)
+- [🕳 deep](#-deep)
   - [verbose vs tosource](#vs)
   - [verbose](#verbose)
   - [tosource](#tosource)
-- [presets](#-presets)
+- [💈 highlight](#-highlight)
+- [🍰 presets](#-presets)
   - [add your own](#add-your-own)
   - [use built ins](#use-built-ins)
-- [timestamps](#-timestamps)
+- [⌛ timestamps](#-timestamps)
 - [from](#from)
-
+- [🎢 fun](#-fun)
+  - [📊 bar chart](#-bar)
+  - [📦 box](#-box)
+  - [📯 beep](#-beep)
+  - [🎇 sparkly](#-sparkly)
+  - [🔣 formatting](#-formatting)
 
 
 ## 👋 basics
+
 ```js
 log
   .data({anyKindOfData: true}) // .json, .stringify, .tosource, .verbose
@@ -175,7 +185,7 @@ log({data: true}, 'text', 'color')
 
 stack
 
-## emoji
+## 😊 emoji
 names using [emoji-commits](https://github.com/aretecode/emoji-commits) are available with `.emoji` (currently 🚧 not all have been ported yet)
 
 ```js
@@ -220,6 +230,7 @@ log.data({now: 'die'}).exit(1)
 
 ## ⬛ tables
 ![Screenshot](http://i.imgur.com/sYq4T.png)
+
 extending [cli-table2](https://github.com/jamestalmage/cli-table2)
 
 ```js
@@ -247,15 +258,19 @@ const lowlyPeasant = {
 
 log.diff(royalty)
 const abomination = deepmerge(royalty, lowlyPeasant)
-log
-  .diff(abomination)
-  .doDiff()
-  .echo()
+log.diff(abomination)
+
+log.diffs().echo()
 ```
 
 
 ## 🌀 spinner
-extends [cli-spinner](https://www.npmjs.com/package/cli-spinner#demo)
+
+![spinners](https://github.com/sindresorhus/cli-spinners/raw/master/screenshot.gif)
+
+- extends [cli-spinner](https://www.npmjs.com/package/cli-spinner#demo)
+- uses [cli-spinners](https://github.com/sindresorhus/cli-spinners)
+- `.Spinner` is available on fliplog as the instantiated spinner
 
 ```js
 // instance available on log.Spinner
@@ -274,6 +289,78 @@ console.log('log this, then spinner shows up again - it is sticky.')
 
 log.stopSpinner()
 ```
+
+### ora
+- `.ora` is available as a method with [the same options](https://github.com/sindresorhus/ora)
+- adds `.fliplog` to the `ora` instance to allow chaining back to fliplog
+- returns `ora` instance
+
+## 📈 progress
+
+![progress bar](https://cloud.githubusercontent.com/assets/4022631/24585493/9b68fea8-1740-11e7-8b52-d98fa13c9301.gif)
+
+- [node-progress](https://github.com/visionmedia/node-progress)
+
+### default
+```js
+log.progress()
+```
+
+### interval callback
+
+total, cb(bar, interval), interval time
+
+```js
+log.progress(20, (bar, interval) => {
+  bar.tick()
+  if (bar.complete) clearInterval(interval)
+}, 1000)
+```
+
+### advanced
+
+![progress bar download](https://cloud.githubusercontent.com/assets/4022631/24585520/376f2264-1741-11e7-8264-f9f85628e44e.gif)
+
+```js
+let contentLength = 128 * 1024
+const bar = log.progress('  downloading [:bar] :percent :etas', {
+  complete: '=',
+  incomplete: ' ',
+  width: 20,
+  total: contentLength,
+}).progressBar
+
+function next() {
+  if (!contentLength) return
+  bar.tick(Math.random() * 10 * 1024)
+  if (!bar.complete) setTimeout(next, Math.random() * 1000)
+}
+next()
+```
+
+
+
+## 🛎 notify
+
+![node-notifier](https://raw.githubusercontent.com/mikaelbr/node-notifier/master/example/input-example.gif)
+
+- allows passing in the same options from [node-notifier](https://github.com/mikaelbr/node-notifier)
+
+
+#### string title and [description]
+or a `string` for `title`
+```js
+log
+  .notify('woot!', 'super long and not as important description')
+  .echo()
+```
+
+#### shorthand (echo immediate)
+```js
+log.notify('woot!', true)
+```
+
+
 
 
 ## 🗺 stack traces
@@ -307,8 +394,9 @@ log.data({bigData: 'oh'}).trace().echo()
 
 
 
-## ✘ clear
+## 🆑 clear
 > this will clear the terminal (at least, move it down so it is clear)
+
 ```js
 log.clear()
 ```
@@ -356,6 +444,22 @@ log
   .echo()
 ```
 
+## 💈 highlight
+
+![cli-highlight](https://raw.githubusercontent.com/felixfbecker/cli-highlight/master/media/tests.png)
+
+- [cli-highlight](https://www.npmjs.com/package/cli-highlight) (but will not output wrapping html tags around the code, other options are disabled, default themes are used)
+
+```js
+function highlitedWithColors() { return 'notice me' }
+log
+  .data(highlitedWithColors)
+  .tosource()
+  .highlight()
+  .echo()
+```
+
+
 ## 🍰 presets
 
 ### add your own
@@ -380,6 +484,7 @@ log
 
 
 ### ⌛ timestamps
+
 ```js
 log
   .time(true)
@@ -414,9 +519,109 @@ log
   .echo()
 ```
 
-## 🚧
-- progress bar,
-- to file,
+
+## 🎢 fun
+
+these will all be silent by default, so you can easily disable them by filtering your logs or setting silent output which can be exceedingly helpful.
+
+### 🎇 sparkly
+
+![sparkly](https://github.com/sindresorhus/sparkly/blob/master/screenshot.png?raw=true)
+
+- options from [sparkly](https://www.npmjs.com/package/sparkly) can be passed in
+- will output a random sparkle if it is not set
+
+```js
+log.sparkly().echo()
+```
+
+## 📊 bar
+
+![babar](https://github.com/stephan83/babar/raw/master/img/sample.png)
+
+- will output a random bar chart if not set
+- options from [babar](https://www.npmjs.com/package/babar) can be passed in
+
+### random
+
+```js
+log.bar().echo()
+```
+
+### bar
+
+```js
+const points = []
+for (var i = 0; i < Math.PI * 2; i += Math.PI / 1000) {
+  points.push([i, Math.cos(i)]);
+}
+log.bar(points).echo()
+```
+
+### styles and bar
+
+```js
+log
+  .bar([[0, 1], [1, 5], [2, 5], [3, 1], [4, 6]])
+  .barStyles({
+    width: 80,
+    height: 10,
+    color: 'yellow',
+    maxY: 100
+  })
+  .echo()
+```
+
+## 📯 beep
+
+![beeper](https://cloud.githubusercontent.com/assets/170270/5261236/f8471100-7a49-11e4-81af-96cd09a522d9.gif)
+
+all options from [beeper](https://www.npmjs.com/package/beeper)
+
+```js
+log.beep(1).echo()
+```
+
+## 📦 box
+
+![boxen-fliplog](https://cloud.githubusercontent.com/assets/4022631/24585540/d447331a-1741-11e7-83af-e73d308e1794.png)
+
+- all [boxen](https://www.npmjs.com/package/boxen) options
+
+### colors
+
+![boxen-fliplog](https://cloud.githubusercontent.com/assets/4022631/24585616/284cfea2-1744-11e7-94e0-80c2fb031067.png)
+
+```js
+// with bold colors
+log.bold().box('fliplog').echo()
+
+// echos right away
+log.box('fliplog', true)
+
+// use boxen box styles
+log
+  .boxStyles({borderColor: 'blue'})
+  .box('fliplog')
+  .echo()
+```
+
+
+## 🔣 formatting
+
+```js
+log.data({}).bold('text')
+
+// returns the currently formatted text and data
+const {text, data} = log.returnVals()
+
+// returns every single setting as an object, resets
+const everything = log.return()
+```
+
+
+## 📝 TODO
+- to file 📒
 - to stream
 - middleware alongside .return
 
@@ -428,3 +633,4 @@ log
 [license-url]: https://spdx.org/licenses/MIT
 [gitter-badge]: https://img.shields.io/gitter/room/fliphub/pink.svg
 [gitter-url]: https://gitter.im/fliphub/Lobby
+[spinner-img]: https://raw.githubusercontent.com/helloIAmPau/node-spinner/master/img/spinner.gif
