@@ -1,6 +1,6 @@
 {
   "name": "fliplog",
-  "version": "0.1.14",
+  "version": "0.1.17",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [
@@ -32,28 +32,42 @@
     "debugFor.js"
   ],
   "scripts": {
-    "test": "node examples && node test"
+    "test": "node ./test/examples && node ./test/test"
   },
   "engines": {
-    "node": ">= 7.7.4",
-    "npm": ">= 4.1.2"
+    "node": ">= 7.8.0",
+    "npm": ">= 4.2.0"
+  },
+  "optionalDependencies": {
+    "cli-spinners": "^1.0.0"
+  },
+  "devDependencies": {
+    "cli-highlight": "^1.1.4",
+    "boxen": "^1.0.0",
+    "sparkly": "^3.1.2",
+    "babar": "^0.1.0",
+    "beeper": "1.1.1",
+    "listr": "0.11.0"
   },
   "dependencies": {
     "chalk": "^1.1.3",
     "cli-color": "^1.2.0",
-    "flipchain": "*",
-    "to-arr": "*",
-    "inspector-gadget": "*",
-    "expose-hidden": "*",
-    "pretty-error": "^2.0.2",
-    "tosource": "^1.0.0",
-    "lodash.clonedeep": "4.5.0",
-    "deep-diff": "0.3.4",
     "cli-table2": "^0.2.0",
-    "lodash.padend": "4.6.1",
-    "progress": "1.1.8",
+    "deep-diff": "0.3.4",
+    "expose-hidden": "*",
+    "flipchain": "*",
+    "fliptime": "*",
+    "inspector-gadget": "*",
     "javascript-stringify": "^1.6.0",
-    "prettyjson": "1.2.1"
+    "lodash.clonedeep": "4.5.0",
+    "lodash.padend": "4.6.1",
+    "node-notifier": "^5.1.2",
+    "ora": "1.2.0",
+    "pretty-error": "^2.0.2",
+    "prettyjson": "1.2.1",
+    "progress": "1.1.8",
+    "to-arr": "*",
+    "tosource": "^1.0.0"
   },
   "author": "James <aretecode@gmail.com>",
   "homepage": "https://github.com/fliphub/fliplog",

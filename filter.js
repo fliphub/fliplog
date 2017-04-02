@@ -1,3 +1,5 @@
+const {inspector} = require('inspector-gadget')
+
 let index = 0
 const debugs = {}
 
@@ -66,7 +68,9 @@ function tagAndFilters({filters, tags}) {
   const checkTags = tagPasses.bind(null, tags)
 
   // check whether we should filter
-  return shouldFilter({checkTags, filters})
+  const should = shouldFilter({checkTags, filters})
+  // console.log(inspector(filters))
+  return should
 }
 
 tagAndFilters.debugs = debugs

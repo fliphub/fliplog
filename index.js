@@ -7,7 +7,7 @@
 // - [ ] docs
 // - [x] emoji by name - checkout existing ones
 // - [ ] integrate an existing validator
-// - [ ] https://github.com/sindresorhus/boxen
+// - [ ] https://www.npmjs.com/package/boxen
 // - [ ] https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md
 
 // http://stackoverflow.com/questions/26675055/nodejs-parse-process-stdout-to-a-variable
@@ -19,6 +19,7 @@
 // const cursor = ansi(process.stdout)
 const path = require('path')
 const chalk = require('chalk')
+const fliptime = require('fliptime')
 const clc = require('cli-color')
 const {inspector} = require('inspector-gadget')
 const toarr = require('to-arr')
@@ -28,11 +29,24 @@ const Chainable = require('flipchain/Chainable.js')
 const Spinner = require('./Spinner')
 const emojiByName = require('./emoji-by-name')
 const shouldFilter = require('./filter')
-
 // Stack trace format :
 // https://github.com/v8/v8/wiki/Stack%20Trace%20API
 let stackReg = /at\s+(.*)\s+\((.*):(\d*):(\d*)\)/i
 let stackReg2 = /at\s+()(.*):(\d*):(\d*)/i
+
+function random(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+function shuffle(a) {
+  for (let i = a.length; i; i--) {
+    let j = Math.floor(Math.random() * i);
+    [a[i - 1], a[j]] = [a[j], a[i - 1]]
+  }
+  return a
+}
+function chance() {
+  return random(0, 10) > 5
+}
 
 // https://github.com/npm/npmlog
 // http://tostring.it/2014/06/23/advanced-logging-with-nodejs/
@@ -103,9 +117,10 @@ class LogChain extends ChainedMapExtendable {
       '_text',
       '_shushed',
       'title',
-      'diffs',
+      '_diffs',
       '_filters',
       '_table',
+      'highlighter',
       // 'presets',
     ])
     this.extendTrue([
@@ -117,7 +132,8 @@ class LogChain extends ChainedMapExtendable {
     ])
 
     this.presets = {}
-    this.echo = this.log
+    this.log = this.echo
+    this.doDiff = this.diffs.bind(this)
     this.reset()
 
     // so it can be called with
@@ -193,11 +209,193 @@ class LogChain extends ChainedMapExtendable {
     return this
   }
 
+  // ------- fun -----
+  boxStyles(styles = {padding: 1, margin: 1, borderStyle: 'double', default: true}) {
+    this.set('boxStyles', styles)
+    return this
+  }
+  box(input, options, echo = false) {
+    const boxen = require('boxen')
+    options = options || this.get('boxStyles')
+    const box = boxen(input, options)
+
+    if (options && options.default === true) {
+      this.text(box)
+    } else {
+      this.data(box)
+    }
+
+    if (echo) return this.echo()
+    return this
+  }
+  // https://github.com/mikaelbr/node-notifier
+  // alias as notification/notify
+  notify(options, msg = null, echo = false) {
+    const notifier = require('node-notifier')
+
+    if (typeof options === 'string' && typeof msg === 'string' && echo === true) {
+      notifier.notify({
+        'title': options,
+        'message': msg,
+      })
+    } else if (typeof options === 'string' && msg === true) {
+      notifier.notify(options)
+    } else if (echo === true) {
+      notifier.notify(options)
+    } else {
+      return this._data({
+        inspect() {
+          notifier.notify(options)
+          return ''
+        },
+      })
+    }
+
+    return this
+  }
+
+  // @TODO:
+  // - [ ] do not echo right away
+  // - [ ] https://www.npmjs.com/package/node-progress-bars
+  progress(total = 20, cb = null, interval = 100) {
+    if (!process.stdout.isTTY) return this
+    const ProgressBar = require('progress')
+
+    if (typeof total === 'string' &&
+        typeof cb === 'object') {
+      this.progressBar = new ProgressBar(total, cb)
+      if (typeof interval === 'function') {
+        interval(this.progressBar)
+      }
+      return this
+    }
+
+    if (cb === null) {
+      cb = (bar) => {
+        bar.tick()
+        if (bar.complete) clearInterval(this.progressCb)
+      }
+    }
+
+    this.progressBar = new ProgressBar('  ╢:bar╟', {
+      // complete: green,
+      // incomplete: red,
+      total,
+      complete: '█',
+      incomplete: '░',
+      clear: true,
+
+      // terminal columns - package name length - additional characters length
+      width: (process.stdout.columns || 100) - 50 - 3,
+    })
+
+    if (interval) {
+      this.progressCb = setInterval(() => cb(this.progressBar, this.progressCb), interval)
+    } else {
+      this.progressCb = cb(this.progressBar)
+    }
+
+    // this.progress = new Progress().init(100)
+    return this
+  }
+
+  sparkly(input = null, options = null) {
+    if (input === null) {
+      // order from random
+      input = [
+        [0, 3, 5, 8, 4, 3, 4, 10],
+        [1, 2, 3, 4, 5, 6, 7, 8],
+        [1, 2, 3, 4, 5, 6, 7, 8],
+        [1, 18, 9, 4, 10],
+      ]
+      input = shuffle(input).pop()
+    }
+
+    if (options === null && chance()) {
+      options = {style: 'fire'}
+    }
+
+    const sparkly = require('sparkly')
+    this._data(sparkly(input, options))
+    return this
+  }
+
+  barStyles(styles = {
+    color: 'green',
+    width: 40,
+    height: 10,
+    maxY: 10,
+    yFractions: 1,
+  }) {
+    return this.set('barStyles', styles)
+  }
+  // https://github.com/substack/node-charm
+  // https://www.npmjs.com/package/cli-chart
+  bar(input = null, styles, echo = false) {
+    styles = styles || this.get('barStyles')
+    if (input === null) {
+      input = [
+        [0, random(1, 10)],
+        [1, random(0, 20)],
+        [2, random(1, 5)],
+        [3, random(0, 1)],
+        [4, random(0, 15)],
+      ]
+    }
+    const babar = require('babar')
+    const data = babar(input, styles)
+    return this._data(data)
+  }
+  list() {
+    const listr = require('listr')
+    return this
+  }
+  beep(sequence = 3, echo = false) {
+    const beep = require('beeper')
+    const data = {
+      inspect() {
+        beep(sequence)
+        return 'beeping! '
+      },
+    }
+    if (echo) {
+      data.inspect()
+      return this
+    }
+    return this._data(data)
+  }
+
+  highlight(code = null, language = 'javascript') {
+    const {highlight} = require('cli-highlight')
+    const opts = {language, ignoreIllegals: false}
+    return this.highlighter((data) => {
+      const tagged = highlight(data, opts)
+      return tagged.replace(/<\/?[^>]+(>|$)/g, '') + '\n'
+    })
+
+    // return this._data(code || this.get('_data'))
+  }
+
+  // ----------------------------- timer ------------------
+
+  startTimer(name) {
+    fliptime.start(name)
+    return this
+  }
+  stopTimer(name) {
+    fliptime.stop(name)
+    return this
+  }
+  lapTimer(name) {
+    fliptime.stop(name)
+    return this
+  }
+
+
   // ----------------------------- differences ------------------
 
   table(head, data) {
     const Table = require('cli-table2')
-
 
     this.row = (row) => this.table.push(data)
 
@@ -218,22 +416,22 @@ class LogChain extends ChainedMapExtendable {
   // can pass in a diff1 and then call diff again to diff again
   diff() {
     const clone = require('lodash.clonedeep')
-    const diffs = this.get('diffs')
+    const _diffs = this.get('_diffs')
     const args = Array.from(arguments).map((arg) => clone(arg))
 
-    this.diffs(diffs.concat(args))
+    this._diffs(_diffs.concat(args))
     return this
   }
-  doDiff() {
+  diffs() {
     const Table = require('cli-table2')
     const deepDiff = require('deep-diff')
     const tosource = require('tosource')
     const colWidths = [200, 200, 200]
 
-    const diffs = this.get('diffs')
-    const diff = deepDiff(diffs.pop(), diffs.pop())
-    // console.log(diff)
+    const _diffs = this.get('_diffs')
+    const diff = deepDiff(_diffs.pop(), _diffs.pop())
 
+    if (!diff) return this.data('no diff')
     const heads = diff.map(Object.keys)
     const datas = diff.map(Object.values)
     let tables = ''
@@ -350,6 +548,7 @@ class LogChain extends ChainedMapExtendable {
     return this.data(prettified)
   }
   json(data, opts = {}) {
+    if (typeof data !== 'object') return this.data(data).verbose(5)
     const defaults = {
       keysColor: 'blue',
       dashColor: 'yellow',
@@ -403,9 +602,8 @@ class LogChain extends ChainedMapExtendable {
   // enableTags, disableTags
   // handle keys here...
   filter(filters) {
-    const filter = toarr(filters).concat(this.get('_filters'))
-    this._filters(filter)
-    return this
+    const filter = toarr(filters).concat(this.get('_filters') || [])
+    return this._filters(filter)
   }
   tags(names) {
     const tags = this.get('_tags')
@@ -416,7 +614,7 @@ class LogChain extends ChainedMapExtendable {
   // check if the filters allow the tags
   _filter() {
     const tags = this.get('_tags')
-    const filters = this.get('_filters')
+    const filters = this.get('_filters') || []
     const should = shouldFilter({filters, tags})
     if (should) return this.silent(true)
     return this
@@ -438,8 +636,9 @@ class LogChain extends ChainedMapExtendable {
     this.verbose(5)
     return this.log()
   }
-  quick() {
+  quick(arg) {
     this.reset()
+    if (arguments.length === 1) return this.data(arguments).verbose().exit()
     return this.data(arguments).verbose().exit()
   }
   exit(log = true) {
@@ -460,7 +659,9 @@ class LogChain extends ChainedMapExtendable {
     }
     this.time(false)
 
-    this.diffs([])
+    this.boxStyles()
+    this.barStyles()
+    this._diffs([])
     this.color('magenta')
     this.text('')
     this.title(false)
@@ -469,9 +670,10 @@ class LogChain extends ChainedMapExtendable {
     this.tosource(false)
     this.verbose(10)
     this.space(false)
+    this.highlighter(false)
     this.silent(false)
     this._data(OFF)
-    this._filters([])
+    // this._filters([])
     this._tags([])
     return this
   }
@@ -482,14 +684,14 @@ class LogChain extends ChainedMapExtendable {
 
   // ----------------------------- actual output ------------------
 
-  log(data) {
+  echo(data = OFF) {
     this.stack()
     this._filter()
-    if (!data) data = this.get('_data')
     if (data === false) {
       this.reset()
       return this
     }
+    if (data === OFF) data = this.get('_data')
 
     if (shh === true) {
       // so we can have them on 1 line
@@ -596,11 +798,17 @@ class LogChain extends ChainedMapExtendable {
   }
 
   getToSource(msg) {
+    const highlighter = this.get('highlighter')
+
     // typeof msg === 'object' &&
     if (this.get('tosource')) {
       const tosource = require('tosource')
+      if (highlighter) return highlighter(tosource(msg))
       return tosource(msg)
     }
+
+    if (highlighter) return highlighter(msg)
+
     return msg
   }
   getVerbose(msg) {
@@ -628,6 +836,14 @@ class LogChain extends ChainedMapExtendable {
 
   // ----------------------------- spinner ------------------
 
+  // https://github.com/sindresorhus/ora
+  ora(options, dots = 'dots1') {
+    // const cliSpinners = require('cli-spinners')
+    const ora = require('ora')
+    ora.fliplog = this
+    this.Spinner = ora(options)
+    return this.Spinner
+  }
 
   // @TODO: pr it to update examples...
   // https://www.npmjs.com/package/cli-spinner#demo
