@@ -35,9 +35,9 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
 
 ## 🗝️ legend:
 - [👋 basics](#-basics)
-- [🎀 stringifying](#stringifying)
+- [🎀 stringifying](#-stringifying)
   - [json](#json)
-  - [stringify](#-stringify)
+  - [stringify](#stringify)
 - [🙊 silencing](#-silencing)
   - [capture all](#capture-all)
   - [return formatted values](#return)
@@ -49,13 +49,13 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
 - [function](#function)
 - [😊 emoji](#-emoji)
 - [☕ filtering](#-filtering)
-  - [.filter](#filter-and-tags)
-  - [.tags](#filter-and-tags)
-- [⏲ .quick](#-quick)
-- [⬛ .table](#-tables)
-- [⚖️ .diff](#-diff)
-  - [.row](#row)
-  - [.diffs](#diff)
+  - [filter](#filter--tags)
+  - [tags](#filter--tags)
+- [⏲ quick](#-quick)
+- [⬛ table](#-tables)
+- [⚖️ diff](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
+  - [row](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
+  - [diffs](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
 - [🌀 spinner](#-spinner)
   - [ora](#-spinner)
 - [📈 progress](#-progress)
@@ -84,7 +84,7 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
     - [ 🛰 space ](#-space)
     - [ 💱 formatter ](#-formatter)
   - [🐌 slow](#-slow)
-- [resources][#-resources]
+- [resources](#-resources)
 
 ## 👋 basics
 
@@ -263,7 +263,7 @@ log
   .echo()
 ```
 
-### ⚖️ diff
+## - ⚖️ diff
 using [deep-diff](https://www.npmjs.com/package/deep-diff), you can compare before and after data differences as tables. Data will be cloned so it can be mutated and then compared.
 
 ```js
