@@ -19,11 +19,11 @@ module.exports = class ProgressBarController {
     }
 
     // Don't do any of this while testing
-    if (process.env.NODE_ENV === 'lerna-test') {
-      return
-    }
+    // if (process.env.NODE_ENV === 'lerna-test') {
+    //   return
+    // }
 
-    this.bar = new ProgressBar(':packagename ╢:bar╟', {
+    this.bar = new ProgressBar(':name ╢:bar╟', {
       total,
       complete: '█',
       incomplete: '░',
@@ -37,7 +37,7 @@ module.exports = class ProgressBarController {
   tick(name) {
     if (this.bar) {
       this.bar.tick({
-        packagename: padEnd(name.slice(0, 50), 50),
+        name: padEnd(name.slice(0, 50), 50),
       })
     }
   }

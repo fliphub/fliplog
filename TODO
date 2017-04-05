@@ -1,4 +1,5 @@
-add lightweight mode
+
+add lightweight mode (flipshake)
 
 https://github.com/TooTallNate/ansi.js
 
@@ -28,7 +29,4 @@ https://www.npmjs.com/package/beeper
 
 http://docs.graylog.org/en/2.2/pages/gelf.html
 
-add a method to just return a formatter :-)
-
-
-progress bar, notifications, charts, sparkles, psr-3, file formatting
+psr-3, file formatting

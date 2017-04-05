@@ -19,7 +19,9 @@ function tagPasses(tags, filter, not) {
   return true
 }
 
-function shouldFilter({filters, tags, checkTags}) {
+
+// pass in tags & instance here just for fn filter
+function shouldFilter({filters, tags, checkTags, instance}) {
   const hasStarFilter = filters.includes('*')
   const hasSilentFilter = filters.includes('silent')
   debugs[index].filters.push({hasStarFilter, hasSilentFilter})
@@ -27,36 +29,57 @@ function shouldFilter({filters, tags, checkTags}) {
   if (hasStarFilter) return false
   if (hasSilentFilter) return true
 
+  let shouldBeFiltered = false
+
   for (let i = 0; i < filters.length; i++) {
     const filter = filters[i]
+
+    if (typeof filter === 'function') {
+      // because filter `allows` things through
+      // whereas we are checking if it *should* be filtered OUT
+      // and so it needs to return `false` to say it should be allowed :s
+      // whitelist vs blacklist
+      shouldBeFiltered = filter(Object.assign(instance.entries(), {
+        tags,
+        checkTags,
+        debugs,
+        index,
+        filters,
+      }))
+      if (shouldBeFiltered === false) shouldBeFiltered = true
+      return shouldBeFiltered
+    }
+
     let not = filter.includes('!')
+    let shouldFilterTag = false
 
     // @TODO: later, for arithmetics
     // if (filter.includes('&')) {
-    //   const silent = filter
+    //   // if it has `&` combine the filters
+    //   shouldFilterTag = !filter
     //     .split('&')
-    //     .map((tag) => this._filterTagsByFilter(filter, not))
+    //     .map((tag) => tagPasses(filter, not))
     //     .filter((tag) => tag === false)
     //     .length === filter.split('&').length
-    //
-    //   if (silent) return this.silent(true)
     // }
+    // else {
+    shouldFilterTag = checkTags(filter, not)
 
-    const shouldFilterTag = checkTags(filter, not)
     debugs[index].filters.push({not, filter, shouldFilterTag})
 
     if (shouldFilterTag === false) return true
   }
 
-  return false
+  return shouldBeFiltered
 }
 
 /**
  * @param  {Array<string>} filters filters to check
  * @param  {Array<string>} tags tags to check
+ * @param  {Log} instance - fliplog instance
  * @return {boolean}
  */
-function tagAndFilters({filters, tags}) {
+function tagAndFilters({filters, tags, instance}) {
   // setup debug values for later
   index = index + 1
   debugs[index] = {
@@ -68,7 +91,7 @@ function tagAndFilters({filters, tags}) {
   const checkTags = tagPasses.bind(null, tags)
 
   // check whether we should filter
-  const should = shouldFilter({checkTags, filters})
+  const should = shouldFilter({checkTags, filters, tags, instance})
   // console.log(inspector(filters))
   return should
 }
