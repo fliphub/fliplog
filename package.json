@@ -1,6 +1,6 @@
 {
   "name": "fliplog",
-  "version": "0.1.17",
+  "version": "0.1.22",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [
@@ -67,7 +67,8 @@
     "prettyjson": "1.2.1",
     "progress": "1.1.8",
     "to-arr": "*",
-    "tosource": "^1.0.0"
+    "tosource": "^1.0.0",
+    "sleepfor": "*"
   },
   "author": "James <aretecode@gmail.com>",
   "homepage": "https://github.com/fliphub/fliplog",

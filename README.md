@@ -1,9 +1,20 @@
 # ⛓🔈 fliplog
-> fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets
 
-[![NPM version][npm-image]][npm-url]
+[![NPM version][fliplog-npm-image]][fliplog-npm-url]
 [![MIT License][license-image]][license-url]
 [![fliphub][gitter-badge]][gitter-url]
+[![flipfam][flipfam-image]][flipfam-url]
+
+[fliplog-npm-image]: https://img.shields.io/npm/v/fliplog.svg
+[fliplog-npm-url]: https://npmjs.org/package/fliplog
+[license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-url]: https://spdx.org/licenses/MIT
+[gitter-badge]: https://img.shields.io/gitter/room/fliphub/pink.svg
+[gitter-url]: https://gitter.im/fliphub/Lobby
+[flipfam-image]: https://img.shields.io/badge/%F0%9F%8F%97%20%F0%9F%92%A0-flipfam-9659F7.svg
+[flipfam-url]: https://www.npmjs.com/package/flipfam
+
+> all-in-one logging tool
 
 ![Screenshot](https://cloud.githubusercontent.com/assets/4022631/24160506/46c47d34-0e1f-11e7-8c27-4b653330ae02.png)
 
@@ -18,8 +29,11 @@ npm i fliplog --save
 const log = require('fliplog')
 ```
 
+## 🔠 description
 
-## 📋 legend:
+fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, boxen, stringifying, code highlighting, notifications, beeping, sparkles, slow-mode, formatting, bar charts, & presets
+
+## 🗝️ legend:
 - [👋 basics](#-basics)
 - [🎀 stringifying](#stringifying)
   - [json](#json)
@@ -33,7 +47,7 @@ const log = require('fliplog')
   - [shorthands](#shorthands)
   - [xterm](#xterm)
 - [function](#function)
-- [😊 emoji](#emoji)
+- [😊 emoji](#-emoji)
 - [☕ filtering](#-filtering)
   - [.filter](#filter-and-tags)
   - [.tags](#filter-and-tags)
@@ -67,7 +81,10 @@ const log = require('fliplog')
   - [📯 beep](#-beep)
   - [🎇 sparkly](#-sparkly)
   - [🔣 formatting](#-formatting)
-
+    - [ 🛰 space ](#-space)
+    - [ 💱 formatter ](#-formatter)
+  - [🐌 slow](#-slow)
+- [resources][#-resources]
 
 ## 👋 basics
 
@@ -197,7 +214,8 @@ log
 ```
 
 ## ☕ filtering
-can use comma separated strings, or arrays
+comma separated strings, or arrays
+a function can also be passed in, the argument will be an object containing the entries [see `flipchain/ChainedMap.entries`](https://www.npmjs.com/package/flipchain#other)
 
 ### filter & tags
 ```js
@@ -619,12 +637,68 @@ const {text, data} = log.returnVals()
 const everything = log.return()
 ```
 
+### 🛰 space
+
+will output `number` of spaces after your log
+
+```js
+log.text('followed by 2 empty lines').space(2).echo()
+```
+
+## 🐌 slow
+
+slow mode allows debugging each log step-by-step, and will force a `sleep` usable across all environments using [sleepfor](https://www.npmjs.com/package/sleepfor)
+
+```js
+log.slow(1000)
+log.emoji('snail').yellow('slow...').echo()
+const start = Date.now()
+log.emoji('snail').yellow('...slow').echo()
+const end = Date.now() - start
+```
+
+### 💱 formatter
+
+allows final formatting of the data before echoing
+
+```js
+function cb(data) {
+  if (!data || typeof data !== 'object') return data
+
+  Object
+    .keys(data)
+    .forEach(key => {
+      if (typeof data[key] === 'string')
+        data[key] = data[key].replace(/\s{2}/gmi, ' ')
+      else if (Array.isArray(data[key]))
+        data[key] = data[key].map(a => cb(a.name))
+    })
+
+  return data
+}
+
+const fixture = {
+  str: 'I  have  too  many  spaces',
+  arr: [{name: 'eh'}, {noname: 'just undefined'}],
+}
+
+log
+.formatter(cb)
+.data(fixture)
+.echo()
+```
+
+## 🔗 resources
+- for more on the library used for fluent apis, see [⛓ flipchain][flipchain-url]
+
 
 ## 📝 TODO
 - to file 📒
 - to stream
 - middleware alongside .return
+- configure which keys are persistent across instances
 
+[flipchain]: https://www.npmjs.com/package/flipchain
 [npm-image]: https://img.shields.io/npm/v/fliplog.svg
 [npm-url]: https://npmjs.org/package/fliplog
 [standard-image]: https://img.shields.io/badge/code%20style-standard%2Bes6+-brightgreen.svg

@@ -23,7 +23,7 @@ const fliptime = require('fliptime')
 const clc = require('cli-color')
 const {inspector} = require('inspector-gadget')
 const toarr = require('to-arr')
-const assignHidden = require('expose-hidden')
+const expose = require('expose-hidden')
 const ChainedMapExtendable = require('flipchain/ChainedMapExtendable.js')
 const Chainable = require('flipchain/Chainable.js')
 const Spinner = require('./Spinner')
@@ -172,7 +172,7 @@ class LogChain extends ChainedMapExtendable {
       return logChain.data(arg).text(text).color(color).verbose(10).echo()
     }
 
-    assignHidden(logChain)
+    expose(logChain)
     Object.assign(logfn, logChain)
     return logfn
   }
@@ -192,14 +192,13 @@ class LogChain extends ChainedMapExtendable {
     shh = false
     return this
   }
-  startCapturing() {
-    this.savedLog = []
+  startCapturing(output = false) {
     const saveLog = this.saveLog.bind(this)
     this.stdoutWriteRef = process.stdout.write
     process.stdout.write = (function(write) {
       return function(string, encoding, fileDescriptor) {
         saveLog(string, fileDescriptor)
-        write.apply(process.stdout, arguments)
+        // write.apply(process.stdout, arguments)
       }
     })(process.stdout.write)
     return this
@@ -527,6 +526,12 @@ class LogChain extends ChainedMapExtendable {
 
   // ----------------------------- adding data ------------------
 
+  // https://www.npmjs.com/package/expose-hidden
+  expose(shouldExpose = true) {
+    this.set('expose', shouldExpose)
+    return this
+  }
+
   // number, bool, or data
   verbose(data) {
     if (Number.isInteger(data)) {
@@ -562,7 +567,28 @@ class LogChain extends ChainedMapExtendable {
     return this.data(prettified)
   }
 
+  formatter(cb) {
+    if (!cb) cb = (arg) => {
+      if (arg && typeof arg === 'object') {
+        Object.keys(arg).forEach(key => {
+          if (typeof arg[key] === 'string') {
+            arg[key] = arg[key].replace('', '')
+          }
+          else if (Array.isArray(arg[key])) {
+            arg[key] = arg[key].map(a => cb(a))
+          }
+        })
+      }
+      return arg
+    }
+
+    this.set('formatter', cb)
+    return this
+  }
+
   data(arg) {
+    const cb = this.get('formatter')
+    if (cb) arg = cb(arg)
     const args = Array.from(arguments)
     if (args.length === 1) {
       return this._data(arg)
@@ -615,7 +641,7 @@ class LogChain extends ChainedMapExtendable {
   _filter() {
     const tags = this.get('_tags')
     const filters = this.get('_filters') || []
-    const should = shouldFilter({filters, tags})
+    const should = shouldFilter({filters, tags, instance: this})
     if (should) return this.silent(true)
     return this
     // console.log(tags, filters)
@@ -653,6 +679,8 @@ class LogChain extends ChainedMapExtendable {
   }
 
   reset() {
+    if (!this.savedLog) this.savedLog = []
+
     // persist the time logging
     if (this.get('time')) {
       this.time(true)
@@ -682,6 +710,22 @@ class LogChain extends ChainedMapExtendable {
     return this
   }
 
+  // ----------------------------- sleeping ------------------
+
+  slow(time = 100) {
+    this.set('sleepBetween', time)
+    return this
+  }
+
+  sleepIfNeeded() {
+    const sleepBetween = this.get('sleepBetween')
+    if (sleepBetween) {
+      const sleepFor = require('sleepfor')
+      sleepFor(sleepBetween)
+    }
+    return this
+  }
+
   // ----------------------------- actual output ------------------
 
   echo(data = OFF) {
@@ -706,6 +750,8 @@ class LogChain extends ChainedMapExtendable {
       this.reset()
       return this
     }
+
+    this.sleepIfNeeded()
 
     // so we can have them on 1 line
     const text = this.logText()
@@ -733,6 +779,7 @@ class LogChain extends ChainedMapExtendable {
     let data = this.get('_data')
     if (data === OFF) return OFF
 
+    if (this.get('expose')) data = expose(data)
     data = this.getToSource(data)
     data = this.getVerbose(data)
 
