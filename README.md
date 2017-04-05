@@ -263,7 +263,7 @@ log
   .echo()
 ```
 
-## - ⚖️ diff
+## ⚖️ diff
 using [deep-diff](https://www.npmjs.com/package/deep-diff), you can compare before and after data differences as tables. Data will be cloned so it can be mutated and then compared.
 
 ```js
