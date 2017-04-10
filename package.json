@@ -1,6 +1,6 @@
 {
   "name": "fliplog",
-  "version": "0.1.22",
+  "version": "0.1.26",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [
@@ -32,7 +32,8 @@
     "debugFor.js"
   ],
   "scripts": {
-    "test": "node ./test/examples && node ./test/test"
+    "test": "node ./test/examples && node ./test/test",
+    "test-all": "node ./test/examples && node ./test/test && node test/boxen && node test/filter && node test/progress && node test/slow && node test/formatter && node test/from && node test/quick"
   },
   "engines": {
     "node": ">= 7.8.0",

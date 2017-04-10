@@ -54,7 +54,7 @@ function chance() {
 // https://www.loggly.com/ultimate-guide/node-logging-basics/
 // https://www.npmjs.com/package/cli-color
 const clrs = [
-  'black', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'gray',
+  'black', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'gray', 'red',
 ]
 const bgColors = [
   'bgBlack', 'bgRed', 'bgGreen', 'bgYellow', 'bgBlue', 'bgMagenta', 'bgCyan', 'bgWhite',
@@ -386,7 +386,18 @@ class LogChain extends ChainedMapExtendable {
     return this
   }
   lapTimer(name) {
-    fliptime.stop(name)
+    fliptime.lap(name)
+    return this
+  }
+  fliptime(name) {
+    return fliptime
+  }
+  echoTimer(name) {
+    fliptime.log(name)
+    return this
+  }
+  stopAndEchoTimer(name) {
+    fliptime.stop(name).log(name)
     return this
   }
 
@@ -477,6 +488,23 @@ class LogChain extends ChainedMapExtendable {
   // https://www.npmjs.com/package/callsite
   // http://www.devthought.com/2011/12/22/a-string-is-not-an-error/#beyond
   // https://github.com/baryon/tracer#log-file-transport
+
+  // https://remysharp.com/2014/05/23/where-is-that-console-log
+  trackConsole() {
+    const ops = ['log', 'warn']
+    ops.forEach((method) => {
+      var old = console[method]
+      console[method] = function() {
+        var stack = (new Error()).stack.split(/\n/)
+          // Chrome includes a single "Error" line, FF doesn't.
+        if (stack[0].indexOf('Error') === 0) {
+          stack = stack.slice(1)
+        }
+        var args = [].slice.apply(arguments).concat([stack[1].trim()])
+        return old.apply(console, args)
+      }
+    })
+  }
 
   trace() {
     const e = new Error('log.trace')
@@ -664,14 +692,19 @@ class LogChain extends ChainedMapExtendable {
   }
   quick(arg) {
     this.reset()
-    if (arguments.length === 1) return this.data(arguments).verbose().exit()
+    console.log('\n')
+    this
+      .color('yellow.bold')
+      .text('=========== 💨  quick 💨  ===========')
+      .space(1)
+    if (arguments.length === 1) return this.data(arg).verbose().exit()
     return this.data(arguments).verbose().exit()
   }
   exit(log = true) {
     // this.trace()
     this.echo()
     this.reset()
-    if (log) console.log('🛑  exit')
+    if (log) console.log('🛑  exit \n')
     process.exit()
   }
   catch() {
@@ -712,6 +745,12 @@ class LogChain extends ChainedMapExtendable {
 
   // ----------------------------- sleeping ------------------
 
+  sleep(time = 1000) {
+    const sleepfor = require('sleepfor')
+    sleepfor(time)
+    return this
+  }
+
   slow(time = 100) {
     this.set('sleepBetween', time)
     return this
@@ -720,8 +759,8 @@ class LogChain extends ChainedMapExtendable {
   sleepIfNeeded() {
     const sleepBetween = this.get('sleepBetween')
     if (sleepBetween) {
-      const sleepFor = require('sleepfor')
-      sleepFor(sleepBetween)
+      const sleepfor = require('sleepfor')
+      sleepfor(sleepBetween)
     }
     return this
   }
@@ -757,12 +796,22 @@ class LogChain extends ChainedMapExtendable {
     const text = this.logText()
     const datas = this.logData()
 
-    if (datas !== OFF && text !== OFF) console.log(text, datas)
-    else if (datas !== OFF) console.log(datas)
-    else if (text !== OFF) console.log(text)
-    else console.log(text, datas)
+    if (datas !== OFF && text !== OFF) {
+      console.log(text, datas)
+    }
+    else if (datas !== OFF) {
+      console.log(datas)
+    }
+    else if (text !== OFF) {
+      console.log(text)
+    }
+    else {
+      console.log(text, datas)
+    }
 
-    this.logSpaces()
+    const spaces = this.logSpaces()
+    if (spaces !== '') console.log(spaces)
+
     this.reset()
     return this
   }
@@ -773,6 +822,9 @@ class LogChain extends ChainedMapExtendable {
     text = this.getTime(text)
 
     if (!text) return OFF
+
+    text += this.logSpaces()
+
     return text
   }
   logData() {
@@ -785,12 +837,12 @@ class LogChain extends ChainedMapExtendable {
 
     return data
   }
-  logSpaces(msg) {
+  logSpaces(msg = '') {
     const space = this.get('space')
-    if (Number.isInteger(space)) console.log('\n'.repeat(space))
-    if (space === true) console.log('\n\n\n')
+    if (Number.isInteger(space)) return '\n'.repeat(space)
+    if (space === true) return '\n\n\n'
     // else if (space !== undefined) console.log('\n')
-    return msg
+    return msg || ''
   }
 
   getColored(msg) {

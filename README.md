@@ -51,7 +51,7 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
 - [☕ filtering](#-filtering)
   - [filter](#filter--tags)
   - [tags](#filter--tags)
-- [⏲ quick](#-quick)
+- [🛑 quick](#-quick)
 - [⬛ table](#-tables)
 - [⚖️ diff](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
   - [row](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
@@ -81,9 +81,10 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
   - [📯 beep](#-beep)
   - [🎇 sparkly](#-sparkly)
   - [🔣 formatting](#-formatting)
-    - [ 🛰 space ](#-space)
-    - [ 💱 formatter ](#-formatter)
+    - [🛰 space](#-space)
+    - [💱 formatter](#-formatter)
   - [🐌 slow](#-slow)
+  - [⏲ timer](#-timer)
 - [resources](#-resources)
 
 ## 👋 basics
@@ -233,7 +234,7 @@ log
   .echo()
 ```
 
-## ⏲ quick
+## 🛑 quick
 
 quickly log data and exit if you want to stop execution at a certain point for
 debugging
@@ -402,6 +403,15 @@ log.track()
 // later on...
 
 log.bold('I cannot be found... oh wait, I was tracked.').echo()
+```
+
+you can also track every console.log anywhere
+
+```js
+log.trackConsole()
+
+// becomes `eh 'at your-file#the-line-number'`
+console.log('me!')
 ```
 
 ### trace
@@ -657,6 +667,30 @@ log.emoji('snail').yellow('...slow').echo()
 const end = Date.now() - start
 ```
 
+## ⏲ timer
+
+start, stop, lap, and timer instance using [fliptime](https://www.npmjs.com/package/fliptime)
+
+```js
+log
+  .startTimer('named')
+  .sleep(1000)
+  .stopTimer('named')
+  .echoTimer('named')
+```
+
+or for more customized usage
+
+```js
+log.startTimer('named')
+
+sleepfor(1000)
+
+log.stopTimer('named').echoTimer('named')
+
+const fliptime = log.fliptime()
+```
+
 ### 💱 formatter
 
 allows final formatting of the data before echoing
@@ -689,7 +723,7 @@ log
 ```
 
 ## 🔗 resources
-- for more on the library used for fluent apis, see [⛓ flipchain][flipchain-url]
+- for more on the library used for fluent apis, see [⛓ flipchain](https://www.npmjs.com/package/flipchain)
 
 
 ## 📝 TODO
@@ -698,7 +732,7 @@ log
 - middleware alongside .return
 - configure which keys are persistent across instances
 
-[flipchain]: https://www.npmjs.com/package/flipchain
+[flipchain-url]: https://www.npmjs.com/package/flipchain
 [npm-image]: https://img.shields.io/npm/v/fliplog.svg
 [npm-url]: https://npmjs.org/package/fliplog
 [standard-image]: https://img.shields.io/badge/code%20style-standard%2Bes6+-brightgreen.svg
