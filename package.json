@@ -1,6 +1,6 @@
 {
   "name": "fliplog",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [
@@ -62,14 +62,15 @@
     "javascript-stringify": "^1.6.0",
     "lodash.clonedeep": "4.5.0",
     "lodash.padend": "4.6.1",
+    "multispinner": "^0.2.1",
     "node-notifier": "^5.1.2",
     "ora": "1.2.0",
     "pretty-error": "^2.0.2",
     "prettyjson": "1.2.1",
     "progress": "1.1.8",
+    "sleepfor": "*",
     "to-arr": "*",
-    "tosource": "^1.0.0",
-    "sleepfor": "*"
+    "tosource": "^1.0.0"
   },
   "author": "James <aretecode@gmail.com>",
   "homepage": "https://github.com/fliphub/fliplog",
