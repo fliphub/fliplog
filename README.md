@@ -57,6 +57,7 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
   - [row](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
   - [diffs](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
 - [🌀 spinner](#-spinner)
+  - [multi](#-spinner)
   - [ora](#-spinner)
 - [📈 progress](#-progress)
 - [🛎 notify](#-notify)
@@ -85,6 +86,7 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
     - [ 💱 formatter ](#-formatter)
   - [🐌 slow](#-slow)
   - [⏲ timer](#-timer)
+  - [⚡ performance](#-performance)
 - [resources](#-resources)
 
 ## 👋 basics
@@ -291,6 +293,16 @@ log.diffs().echo()
 - uses [cli-spinners](https://github.com/sindresorhus/cli-spinners)
 - `.Spinner` is available on fliplog as the instantiated spinner
 
+#### easy
+
+```js
+// easy to color spinners
+log.bold().startSpinner('loading...')
+setTimeout(() => log.stopSpinner(), 2000)
+```
+
+#### advanced
+
 ```js
 // instance available on log.Spinner
 log.startSpinner('spinner message', {
@@ -309,10 +321,46 @@ console.log('log this, then spinner shows up again - it is sticky.')
 log.stopSpinner()
 ```
 
+### 🌀🌀 multiple
+
+![multi-spinner](https://cloud.githubusercontent.com/assets/4022631/24937229/00228c10-1ee4-11e7-88ae-5c6f626014cb.gif)
+
+- uses [node-multispinner](https://github.com/codekirei/node-multispinner)
+
+
+```js
+// instance available on log.spinners
+log
+  .addSpinner('key1', 'spinner 1 msg')
+  .addSpinner('key2', 'spinner 2 msg')
+  .addSpinner('key3', 'spinner 3 msg')
+
+  // arg is optionally a string for frames
+  // or an object for multi-spinner options
+  .startSpinners()
+
+// string arg removes by name
+setTimeout(() => log.removeSpinner('key1'), 1000)
+
+// empty args removes all
+setTimeout(() => log.removeSpinner(), 20000)
+```
+
+
 ### ora
 - `.ora` is available as a method with [the same options](https://github.com/sindresorhus/ora)
 - adds `.fliplog` to the `ora` instance to allow chaining back to fliplog
 - returns `ora` instance
+
+```js
+// call .ora
+log.ora('loading...').start()
+
+// or
+log.spinner('loading...', {ora: true})
+
+```
+
 
 ## 📈 progress
 
@@ -433,7 +481,7 @@ log.clear()
 ## 🕳 deep
 
 ### vs
-| goal                          | winner       
+| goal                          | winner
 | -------------                 |:-------------:|
 | code source                   | tosource      |
 | deep inside objects           | verbose       |
@@ -721,6 +769,13 @@ log
 .data(fixture)
 .echo()
 ```
+
+## ⚡ performance
+all non-core dependencies are required when functions are called. this way, only the used-functionality is loaded.
+
+additionally, almost all of the functions are not formatted until `.echo()`, so they will not have dependencies loaded when echoing is false which means code does not have to be changed for production.
+
+if `echo(false)` or [filtering](#-filtering) disables the output, they are never called.
 
 ## 🔗 resources
 - for more on the library used for fluent apis, see [⛓ flipchain](https://www.npmjs.com/package/flipchain)

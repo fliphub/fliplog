@@ -26,7 +26,6 @@ const toarr = require('to-arr')
 const expose = require('expose-hidden')
 const ChainedMapExtendable = require('flipchain/ChainedMapExtendable.js')
 const Chainable = require('flipchain/Chainable.js')
-const Spinner = require('./Spinner')
 const emojiByName = require('./emoji-by-name')
 const shouldFilter = require('./filter')
 // Stack trace format :
@@ -935,11 +934,22 @@ class LogChain extends ChainedMapExtendable {
 
   // ----------------------------- spinner ------------------
 
+  // https://github.com/sindresorhus/log-update
   // https://github.com/sindresorhus/ora
-  ora(options, dots = 'dots1') {
+  // https://github.com/sindresorhus/speed-test
+  ora(options = {}, dots = 'dots1') {
     // const cliSpinners = require('cli-spinners')
     const ora = require('ora')
     ora.fliplog = this
+
+
+    if (typeof options === 'string') {
+      options = {text: options}
+    }
+    if (this.get('color') && !options.color) {
+      options.color = this.get('color')
+    }
+
     this.Spinner = ora(options)
     return this.Spinner
   }
@@ -949,15 +959,111 @@ class LogChain extends ChainedMapExtendable {
   // '<^>v'
   // '|/-\\'
   // spinner(message = 'flipping...', chars = )
-  spinner(text = 'flipping...', opts = {}) {
-    opts.text = text
-    if (!opts.text.includes('%s')) opts.text = ' %s ' + text
 
-    this.Spinner = new Spinner(opts)
-    this.Spinner.start()
+  spinnerFactory(text = 'flipping...', opts = {}) {
+    opts.text = text
+
+    if (opts.ora) {
+      delete opts.ora
+      return this.ora(opts)
+    }
+
+    if (!opts.text.includes('%s')) opts.text = ' %s ' + text
+    if (this.get('color') && !opts.color) {
+      const colorFn = this.getLogWrapFn()
+      opts.text = colorFn(opts.text)
+    }
+
+    const Spinner = require('./Spinner')
+    const spinner = new Spinner(opts)
 
     // to go back to chaining
-    this.Spinner.fliplog = () => this
+    spinner.fliplog = () => this
+    return spinner
+  }
+
+  // https://github.com/werk85/node-html-to-text
+  startSpinners(frames = OFF) {
+    let opts = {}
+    if (frames === OFF) {
+      // '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'.split('')
+      opts.frames = [
+        '[   ]',
+        '[.  ]',
+        '[.. ]',
+        '[ ..]',
+        '[  .]',
+        '[   ]',
+        '[=  ]',
+        '[== ]',
+        '[ ==]',
+        '[  =]',
+        '[   ]',
+        '[-  ]',
+        '[-- ]',
+        '[ --]',
+        '[  -]',
+        '[   ]',
+        '[~  ]',
+        '[~~ ]',
+        '[ ~~]',
+        '[  ~]',
+        '[   ]',
+        '[*  ]',
+        '[** ]',
+        '[ **]',
+        '[  *]',
+      ]
+    }
+    else if (typeof frames === 'string') {
+      opts.frames = frames
+    }
+    else if (typeof frames === 'object') {
+      opts = frames
+    }
+
+    const Multispinner = require('multispinner')
+
+    const spinners = Object.values(this.spinnerOpts)
+
+    this.spinners = new Multispinner(spinners, opts)
+
+    return this
+  }
+  stopSpinners() {
+    this.spinners.success()
+    return this
+  }
+
+  addSpinner(name, text = 'flipping...', opts = {}) {
+    opts.text = text
+    this.spinners = this.spinners || {}
+    this.spinnerOpts = this.spinnerOpts || {}
+    this.spinnerOpts[name] = text
+
+    return this
+  }
+  removeSpinner(name = 'all') {
+    // safety
+    this.spinners = this.spinners || {success() {}}
+
+    if (name === 'all') {
+      return Object
+        .values(this.spinnerOpts)
+        .forEach(spinner => this.removeSpinner(spinner))
+    }
+
+    // key, value
+    if (this.spinnerOpts[name]) name = this.spinnerOpts[name]
+
+    this.spinners.success(name)
+
+    return this
+  }
+
+  spinner(text = 'flipping...', opts = {}) {
+    this.Spinner = this.spinnerFactory(text, opts)
+    this.Spinner.start()
     return this
   }
   stopSpinner(clear = false) {
