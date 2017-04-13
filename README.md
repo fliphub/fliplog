@@ -49,6 +49,7 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
 - [function](#function)
 - [😊 emoji](#-emoji)
 - [☕ filtering](#-filtering)
+  - [🚩 flags](#filter-tags)
   - [filter](#filter--tags)
   - [tags](#filter--tags)
 - [🛑 quick](#-quick)
@@ -64,6 +65,7 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
 - [🗺 stack traces](#-stack-traces)
 - [🔎 finding logs](#-find-logs)
 - [⚾ catch errors](#-catch-errors)
+- [®️ .register][#-register]
 - [trace](#trace)
 - [🆑 clear](#-clear)
 - [🕳 deep](#-deep)
@@ -220,6 +222,10 @@ log
 comma separated strings, or arrays
 a function can also be passed in, the argument will be an object containing the entries [see `flipchain/ChainedMap.entries`](https://www.npmjs.com/package/flipchain#other)
 
+- `verbose` enables everything
+- `silent` silences everything
+- `!` means disabled
+
 ### filter & tags
 ```js
 log
@@ -234,6 +240,15 @@ log
   .tag('yes')
   .underline('yay!')
   .echo()
+```
+
+### 🚩 flags 
+
+this can also be done using cli flags
+
+```bash
+yourprogram --flipdebug="!nope,yes"
+yourprogram --flipdebug=verbose
 ```
 
 ## 🛑 quick
@@ -468,6 +483,36 @@ calling `.trace` will output a shortened stack trace to the current location.
 log.data({bigData: 'oh'}).trace().echo()
 ```
 
+
+## ®️ register
+
+### registerConsole
+
+defines properties on the `console` global and automatically calls `echo` where applicable, for easier access:
+
+```js
+log.registerConsole()
+
+console.time('so easy')
+console.bold('hullabaloo')
+console.error(new Error('eh-rar'))
+console.timeEnd('so easy')
+console.quick('toodaloo')
+
+// also available
+// verbose, info, error, track, trace, note, warning, spinner, time, timeEnd, timeLap timeLapEcho, box, beep, timer, table, diff, diffs, stringify, stack, json, filter, tags, quick, exit, reset, sleep, slow, red, yellow, cyan, underline, magenta, bold
+```
+
+### registerCatch
+
+catches uncaught promises and errors, displays them verbosely.
+
+```js
+log.registerCatch()
+
+throw new Error('eh')
+Promise.reject('eh')
+```
 
 
 ## 🆑 clear

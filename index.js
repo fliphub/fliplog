@@ -17,17 +17,14 @@
 // https://github.com/Automattic/cli-table
 // const ansi = require('ansi')
 // const cursor = ansi(process.stdout)
-const path = require('path')
-const chalk = require('chalk')
-const fliptime = require('fliptime')
-const clc = require('cli-color')
+const {basename} = require('path')
 const {inspector} = require('inspector-gadget')
 const toarr = require('to-arr')
 const expose = require('expose-hidden')
 const ChainedMapExtendable = require('flipchain/ChainedMapExtendable.js')
 const Chainable = require('flipchain/Chainable.js')
-const emojiByName = require('./emoji-by-name')
 const shouldFilter = require('./filter')
+
 // Stack trace format :
 // https://github.com/v8/v8/wiki/Stack%20Trace%20API
 let stackReg = /at\s+(.*)\s+\((.*):(\d*):(\d*)\)/i
@@ -146,6 +143,10 @@ class LogChain extends ChainedMapExtendable {
         return this.color(color).text(text)
       }
     })
+
+    if (process.argv.includes('flipdebug=verbose') || process.argv.includes('--flipdebug=verbose')) {
+      this.filter('*')
+    }
 
     Object.assign(this, colorDecorators)
     return this
@@ -377,25 +378,31 @@ class LogChain extends ChainedMapExtendable {
   // ----------------------------- timer ------------------
 
   startTimer(name) {
+    const fliptime = require('fliptime')
     fliptime.start(name)
     return this
   }
   stopTimer(name) {
+    const fliptime = require('fliptime')
     fliptime.stop(name)
     return this
   }
   lapTimer(name) {
+    const fliptime = require('fliptime')
     fliptime.lap(name)
     return this
   }
   fliptime(name) {
+    const fliptime = require('fliptime')
     return fliptime
   }
   echoTimer(name) {
+    const fliptime = require('fliptime')
     fliptime.log(name)
     return this
   }
   stopAndEchoTimer(name) {
+    const fliptime = require('fliptime')
     fliptime.stop(name).log(name)
     return this
   }
@@ -516,7 +523,7 @@ class LogChain extends ChainedMapExtendable {
       data.path = sp[2]
       data.line = sp[3]
       data.pos = sp[4]
-      data.file = path.basename(data.path)
+      data.file = basename(data.path)
       data.stack = stacklist.map(stack => stack.replace(/\s+/, '')) // .join('\n')
       e.stack = data.stack
     }
@@ -542,7 +549,7 @@ class LogChain extends ChainedMapExtendable {
       data.path = sp[2]
       data.line = sp[3]
       data.pos = sp[4]
-      data.file = path.basename(data.path)
+      data.file = basename(data.path)
       // data.stack = stacklist.join('\n')
     }
 
@@ -628,6 +635,7 @@ class LogChain extends ChainedMapExtendable {
     return this
   }
   emoji(name) {
+    const emojiByName = require('./emoji-by-name')
     return this.title(`${emojiByName(name)}  `)
   }
   addText(msg) {
@@ -738,6 +746,7 @@ class LogChain extends ChainedMapExtendable {
     return this
   }
   clear() {
+    const clc = require('cli-color')
     process.stdout.write(clc.reset)
     return this
   }
@@ -852,6 +861,7 @@ class LogChain extends ChainedMapExtendable {
     return text
   }
   getLogWrapFn() {
+    const chalk = require('chalk')
     let logWrapFn = chalk
     const color = this.get('color')
 
@@ -866,6 +876,8 @@ class LogChain extends ChainedMapExtendable {
   getChalked(msg) {}
 
   xterm(color, bgColor) {
+    const clc = require('cli-color')
+
     if (typeof color === 'string' && color.includes('.')) {
       const colorArr = color.split('.')
       const txt = colorArr.shift()
@@ -881,15 +893,20 @@ class LogChain extends ChainedMapExtendable {
 
   getTime(msg) {
     if (this.get('time')) {
+      const chalk = require('chalk')
+
       const data = new Date()
+
       let hour = data.getHours()
       let min = data.getMinutes()
       let sec = data.getSeconds()
       let ms = data.getMilliseconds()
+
       hour = hour < 10 ? `0${hour}` : hour
       min = min < 10 ? `0${min}` : min
       sec = sec < 10 ? `0${sec}` : sec
       ms = ms < 10 ? `0${sec}` : ms
+
       return chalk.yellow(`${min}:${sec}:${ms}: `) + msg
     }
     return msg
@@ -931,6 +948,59 @@ class LogChain extends ChainedMapExtendable {
     return msg
   }
 
+  registerConsole() {
+    console.verbose = (text, ...data) => this.verbose().data(...data).echo()
+    console.info = (text, ...data) => this.emoji('info').verbose().data(...data).echo()
+    console.error = (text, e) => this.preset('error').error(e).echo()
+    console.track = () => this.trackConsole().echo()
+    console.trace = () => this.trace().echo()
+    console.note = (text, ...data) => this.preset('note').text(text).data(...data).echo()
+    console.warning = (text, ...data) => this.preset('warning').text(text).data(...data).echo()
+    console.spinner = (text, ...options) => this.spinner(text, ...options)
+
+    console.time = (name) => this.timer.start(name).echo()
+    console.timeLap = (name) => this.timer.lap(name)
+    console.timeLapEcho = (name) => this.timer.lap(name).echo()
+    console.timeEnd = (name) => this.fliptime().end(name).log(name)
+
+    console.bold = (text, data = OFF) => this.bold(text).data(data).echo()
+    console.red = (text, data = OFF) => this.red(text).data(data).echo()
+    console.yellow = (text, data = OFF) => this.yellow(text).data(data).echo()
+    console.cyan = (text, data = OFF) => this.cyan(text).data(data).echo()
+    console.underline = (text, data = OFF) => this.underline(text).data(data).echo()
+    console.magenta = (text, data = OFF) => this.magenta(text).data(data).echo()
+
+    console.box = (...options) => this.box(...options).echo()
+    console.beep = (...options) => this.beep(...options).echo()
+    console.timer = (...options) => this.timer()
+    console.table = (...options) => this.table(...options).echo()
+    console.diff = (...options) => this.diff(...options)
+    console.diffs = () => this.diffs().echo()
+    console.stringify = (...data) => this.stringify(...data).echo()
+    console.stack = (...data) => this.stack(...data).echo()
+    console.json = (...data) => this.json(...data).echo()
+    console.filter = (...data) => this.filter(...data).echo()
+    console.tags = (...data) => this.tags(...data).echo()
+    console.quick = (...data) => this.quick(...data).echo()
+    console.exit = (...data) => this.exit(...data).echo()
+    console.reset = (...data) => this.reset(...data).echo()
+    console.sleep = (...data) => this.sleep(...data).echo()
+    console.slow = (...data) => this.slow(...data).echo()
+
+    return this
+  }
+
+  // https://gist.github.com/benjamingr/0237932cee84712951a2
+  registerCatch() {
+    process.on('unhandledRejection', (reason, p) => {
+      console.log('Possibly Unhandled Rejection at: Promise ', p, ' reason: ', reason)
+      this.catch(reason, p)
+    })
+    process.on('unhandledException', (exception) => {
+      console.log('fliplog catching unhandledException')
+      this.catch(exception)
+    })
+  }
 
   // ----------------------------- spinner ------------------
 
@@ -985,6 +1055,10 @@ class LogChain extends ChainedMapExtendable {
   // https://github.com/werk85/node-html-to-text
   startSpinners(frames = OFF) {
     let opts = {}
+
+    // if (log.spinnersStarted) return this
+
+    this.spinnersStarted = true
     if (frames === OFF) {
       // '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'.split('')
       opts.frames = [
@@ -1015,7 +1089,10 @@ class LogChain extends ChainedMapExtendable {
         '[  *]',
       ]
     }
-    else if (typeof frames === 'string') {
+    // else if (typeof frames === 'string') {
+    //   opts.frames = frames
+    // }
+    else if (Array.isArray(frames)) {
       opts.frames = frames
     }
     else if (typeof frames === 'object') {
@@ -1031,6 +1108,7 @@ class LogChain extends ChainedMapExtendable {
     return this
   }
   stopSpinners() {
+    this.spinnersStarted = false
     this.spinners.success()
     return this
   }
@@ -1074,6 +1152,21 @@ class LogChain extends ChainedMapExtendable {
     return this
   }
 
+  // ----------------------------- file ------------------
+  // https://gist.github.com/rtgibbons/7354879
+
+  // using always will make every log go to the file
+  // otherwise it is reset
+  toFile(filename, always = false) {
+    this.set('file', filename)
+    return this
+  }
+
+  writeToFile(contents) {
+    const write = require('flipfile/write')
+    write(filename, contents)
+    return this
+  }
 
   // ----------------------------- story ------------------
 

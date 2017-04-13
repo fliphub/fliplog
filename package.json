@@ -1,6 +1,6 @@
 {
   "name": "fliplog",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [

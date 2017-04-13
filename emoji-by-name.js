@@ -98,7 +98,7 @@ const byName = {
   wip: '🚧',
   story: '📓',
   measure: '📐',
-  baby: '🚼👶',
+  baby: '🚼',
   ship: '⛴',
   meta: '📇',
   loop: '🔁',
