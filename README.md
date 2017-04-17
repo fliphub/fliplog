@@ -65,7 +65,7 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
 - [🗺 stack traces](#-stack-traces)
 - [🔎 finding logs](#-find-logs)
 - [⚾ catch errors](#-catch-errors)
-- [®️ .register][#-register]
+- [®️ .register](https://github.com/fliphub/fliplog#️-register)
 - [trace](#trace)
 - [🆑 clear](#-clear)
 - [🕳 deep](#-deep)
