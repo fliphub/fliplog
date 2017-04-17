@@ -12,9 +12,9 @@ let iv = setInterval(() => {
     let color = colors[(i + offset) % colors.length]
     let c = text[(i + offset) % text.length]
     charm
-            .move(1, dy)
-            .foreground(color)
-            .write(c)
+      .move(1, dy)
+      .foreground(color)
+      .write(c)
 
     y += dy
     if (y <= 0 || y >= 5) dy *= -1

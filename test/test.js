@@ -34,11 +34,9 @@ const alien = log
 .return()
 
 
-// console.log({has})
-
 console.assert(arg1.silent === true, 'filtered is ignored')
-console.assert(ehoh.silent === false, 'non filtered is output')
-console.assert(has.silent === false, 'non filtered is output')
+console.assert(ehoh.silent !== true, 'non filtered is output')
+console.assert(has.silent !== true, 'non filtered is output')
 console.assert(args2.silent === true, 'filtered is ignored after logging a non-filtered')
 console.assert(alien.silent === true, 'a second filtered is ignored')
 console.log('all pass :-)')
