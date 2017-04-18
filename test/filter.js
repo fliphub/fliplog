@@ -1,4 +1,5 @@
 const log = require('../')
+// const log = require('../test/_old')
 
 // log.capture()
 // console.log('eh out')
@@ -17,6 +18,7 @@ const log = require('../')
 log
   .filter((args) => {
     console.log(args)
+    console.log('---\n')
   })
 
 const arg1 = log
@@ -24,4 +26,10 @@ const arg1 = log
 .text('args')
 .return()
 
-// console.log(arg1)
+const arg2 = log
+.tags('me')
+.text('me')
+.return()
+// .echo()
+
+// console.log(arg1, arg2)

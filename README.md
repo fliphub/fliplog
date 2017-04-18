@@ -101,6 +101,8 @@ log
   .echo() // outputs the log, .return to return the formatted values
 ```
 
+🆕 [lightweight configurable dependencies](#-performance)
+
 
 ## 🎀 stringifying
 ### json
@@ -242,7 +244,7 @@ log
   .echo()
 ```
 
-### 🚩 flags 
+### 🚩 flags
 
 this can also be done using cli flags
 
@@ -816,6 +818,36 @@ log
 ```
 
 ## ⚡ performance
+
+#### ⚙ config
+to keep the module lightweight, almost all functionality is added through plugins.
+
+the dependencies that are installed can be configured by a package json config, or by using magic npm tags which contain the configs.
+
+the available options are:
+- `min`,
+- `cli`,
+- `debugging`,
+- `formatting`,
+- `fun`,
+- `latest` (default)
+
+##### 📘 package.json
+```js
+"fliplog": ["debugging"],
+```
+
+##### 📘 magic tags
+```bash
+npm i --save fliphub@cli
+npm i --save fliphub@formatting
+```
+
+
+[see the full preset list](https://github.com/fliphub/fliplog/wiki/dynamic-dependencies)
+
+#### requiring
+
 all non-core dependencies are required when functions are called. this way, only the used-functionality is loaded.
 
 additionally, almost all of the functions are not formatted until `.echo()`, so they will not have dependencies loaded when echoing is false which means code does not have to be changed for production.
