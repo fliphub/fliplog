@@ -1,4 +1,3 @@
-const {basename} = require('path')
 const {inspector} = require('inspector-gadget')
 
 module.exports = {
@@ -13,7 +12,7 @@ module.exports = {
   },
 
   /**
-   * @private
+   * @protected
    * @see FlipLog.tosource, FlipLog.highlight
    * @param  {any} msg
    * @return {string}
@@ -34,10 +33,10 @@ module.exports = {
   },
 
   /**
-   * @private
+   * @protected
    * @see FlipLog.verbose, FlipLog.highlight
-   * @param  {any} msg
-   * @return {any}
+   * @param  {string | any} msg
+   * @return {string | any}
    */
   getVerbose(msg) {
     if (this.has('verbose') === true && typeof msg !== 'string') {
@@ -50,11 +49,14 @@ module.exports = {
         try {
           const message = msg.message.split('\n')
           msg.message = message
-        } catch (e) {
+          return msg
+        }
+        catch (e) {
           // do nothing, likely logging a trace
         }
       }
 
+      // console.log({msg})
       msg = inspector(msg, this.get('verbose'))
     }
 

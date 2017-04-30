@@ -1,16 +1,22 @@
 // @NOTE this file is not included in npm files
 const {execSync} = require('child_process')
 const {resolve} = require('path')
-const {existsSync, writeFileSync, readFileSync} = require('fs')
+const {writeFileSync} = require('fs') // readFileSync, existsSync
 let pkg = require('./package.json')
 
 const pkgPath = resolve(__dirname, './package.json')
 const ogPkg = JSON.stringify(pkg, null, 2)
 const ogPkgObj = JSON.parse(ogPkg)
 
+/**
+ * @param  {string} tag
+ * @return {void}
+ */
 function dynamicTag(tag) {
   try {
-    execSync(`echo "module.exports = '${tag}'" > ./tagged.js`, {stdio: 'inherit'})
+    execSync(`echo "module.exports = '${tag}'" > ./tagged.js`, {
+      stdio: 'inherit',
+    })
     pkg.version = ogPkgObj.version
 
     // @NOTE: ignoring this for now,
@@ -34,13 +40,11 @@ function dynamicTag(tag) {
 
     // publish with tag
     execSync(`npm publish --tag ${tag}`, {stdio: 'inherit'})
-  } catch (e) {
+  }
+  catch (e) {
     // restore original
     writeFileSync(pkgPath, ogPkg, 'utf8')
   }
-
-  // no need for this
-  // execSync(`npm version patch --no-git-tag-version && `)
 }
 
 function last() {

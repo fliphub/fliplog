@@ -1,18 +1,21 @@
 const {combinations} = require('../deps')
 
 module.exports = {
+
+  /**
+   * @desc decorate fliplog with color shorthands
+   * @return {void}
+   */
   init() {
-    const colorDecorators = {}
     combinations.forEach(color => {
-      colorDecorators[color] = text => {
+      this[color] = text => {
         return this.color(color).text(text)
       }
     })
-    Object.assign(this, colorDecorators)
   },
 
   /**
-   * @private
+   * @protected
    * @param {string} [msg='']
    * @return {string}
    */
@@ -28,7 +31,7 @@ module.exports = {
   },
 
   /**
-   * @private
+   * @protected
    * @param {string} [msg]
    * @return {string}
    */
@@ -49,7 +52,7 @@ module.exports = {
    *
    * @see FlipLog.addText
    *
-   * @private
+   * @protected
    * @param {string | function} [color=null]
    * @return {Function}
    */
@@ -94,11 +97,9 @@ module.exports = {
   },
 
   /**
-   * when time is used, prepends timestamp to msg
-   * returns msg
-   *
+   * @desc when time is used, prepends timestamp to msg
    * @param  {string} msg
-   * @return {string}
+   * @return {string} returns msg with timestamp if needed
    */
   getTime(msg) {
     if (this.has('time') === true && this.get('time') === true) {
