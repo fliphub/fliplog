@@ -21,6 +21,10 @@ module.exports = {
     return this.set('track', true)
   },
 
+  /**
+   * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#-find-logs
+   * @return {FlipLog} @chainable
+   */
   trackConsole() {
     const ops = ['log', 'warn']
     ops.forEach(method => {
@@ -35,8 +39,14 @@ module.exports = {
         return old.apply(console, args)
       }
     })
+    return this
   },
 
+  /**
+   * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#-find-logs
+   * @see FlipLog.data, FlipLog.verbose
+   * @return {FlipLog} @chainable
+   */
   trace() {
     const e = new Error('log.trace')
     let stacklist = e.stack.split('\n').slice(2)
@@ -57,6 +67,11 @@ module.exports = {
     return this.set('data', inspector(data))
   },
 
+  /**
+   * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#-find-logs
+   * @see FlipLog.data, FlipLog.verbose
+   * @return {FlipLog} @chainable
+   */
   stack() {
     if (this.has('track') === false || this.get('track') === false) {
       return this

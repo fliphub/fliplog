@@ -40,7 +40,8 @@ module.exports = {
 
     if (options && options.default === true) {
       this.text(box)
-    } else {
+    }
+    else {
       this.data(box)
     }
 

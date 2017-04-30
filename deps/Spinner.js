@@ -10,7 +10,8 @@ module.exports = class Spinner {
     this.delay = 60
     if (typeof options === 'string') {
       options = {text: options}
-    } else if (!options) {
+    }
+    else if (!options) {
       options = {}
     }
 

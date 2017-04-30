@@ -24,5 +24,5 @@ log
   .color('cyan')
   .text('🕳  so deep, so colorful, so meta  🎨  ')
   .data(log)
-  .verbose()
+  .verbose(10)
   .echo()

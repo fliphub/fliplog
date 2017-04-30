@@ -7,14 +7,16 @@ function tryJSON(json) {
   try {
     const parsed = JSON.parse(json)
     return parsed
-  } catch (e) {
+  }
+  catch (e) {
     return false
   }
 }
 
-// @NOTE this cache file that is used will not persist across installs
-//
-// https://github.com/yeoman/configstore/blob/master/index.js
+/**
+ * @NOTE this cache file that is used will not persist across installs
+ * @see https://github.com/yeoman/configstore/blob/master/index.js
+ */
 module.exports = class DynamicDeps {
   constructor(debug) {
     pkgDebug = debug
@@ -154,7 +156,8 @@ module.exports = class DynamicDeps {
 
     try {
       writeFileSync(cache, contents, 'utf8')
-    } catch (e) {
+    }
+    catch (e) {
       if (pkgDebug === true) {
         console.log('could not write cache, not an issue')
         console.log(e)
@@ -164,7 +167,7 @@ module.exports = class DynamicDeps {
   }
 
   /**
-   * installs deps when all plugins have been added if needed
+   * @desc installs deps when all plugins have been added if needed
    * @see FlipLog.use
    * @return {FlipLog}
    */

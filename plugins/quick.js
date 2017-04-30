@@ -13,11 +13,11 @@ module.exports = {
    */
   error(error) {
     if (arguments.length === 1) {
-      return this.new().preset('error').verbose(5).data(error).echo()
+      return this.preset('error').verbose(5).data(error).echo()
     }
 
     for (const arg of arguments) {
-      this.new().preset('error').verbose(5).data(arg).echo()
+      this.preset('error').verbose(5).data(arg).echo()
     }
 
     return this
@@ -63,10 +63,29 @@ module.exports = {
   },
 
   /**
+   * @param {Error} e
+   * @param {*} arg2
+   * @param {*} arg3
    * @tutorial https://github.com/fliphub/fliplog#-catch-errors
    * @see FlipLog.exit
    */
-  catch() {
-    this.error(arguments).exit(1)
+  catch(e, arg2 = null, arg3 = null) {
+    if (arg2 === null) {
+      this.error(e).exit(1)
+    }
+    else {
+      this.error(arguments).exit(1)
+    }
+  },
+
+  /**
+   * @since 0.2.3
+   * @param {Error} e
+   * @tutorial https://github.com/fliphub/fliplog#-catch-errors
+   * @see FlipLog.exit
+   */
+  catchAndThrow(e) {
+    this.error(e).echo()
+    throw e
   },
 }

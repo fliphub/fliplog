@@ -49,11 +49,17 @@ module.exports = {
   registerCatch() {
     process.on('unhandledRejection', (reason, p) => {
       console.log('Possibly Unhandled Rejection at: Promise ', p, ' reason: ', reason)
-      this.catch(reason, p)
+      // this.red(p).echo()
+      // this.error(reason).echo()
+      console.log('wtf')
+      process.exit(1)
+      // this.catchAndThrow(reason, p)
     })
     process.on('unhandledException', exception => {
       console.log('fliplog catching unhandledException')
-      this.catch(exception)
+      this.error(exception).echo()
+      process.exit(1)
+      // this.catchAndThrow(exception)
     })
   },
 }

@@ -1,5 +1,3 @@
-const {inspector} = require('inspector-gadget')
-
 let index = 0
 const debugs = {}
 

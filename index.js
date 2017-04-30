@@ -3,11 +3,11 @@ const {OFF, objToStr} = require('./deps')
 const configs = require('./config')
 const DynamicDeps = require('./deps/DynamicDeps')
 
-const pkgDebug = (
-    configs.pkg !== undefined &&
+const pkgDebug =
+  (configs.pkg !== undefined &&
     configs.pkg.fliplog !== undefined &&
-    configs.pkg.fliplog.debug === true
-  ) || process.argv.includes('--fliplog')
+    configs.pkg.fliplog.debug === true) ||
+  process.argv.includes('--fliplog')
 
 const plugins = configs.exportee
 const shh = {
@@ -18,11 +18,11 @@ let shushed = {}
 /**
  *
  * @TODO:
- * - change pkg config
- * - be able to pass in .config at runtime to install more dependencies
- * - check pkg json config at runtime
- * - call depflip on postinstall
- * - ensure all tests work
+ * - [x] change pkg config
+ * - [x] be able to pass in .config at runtime to install more dependencies
+ * - [x] check pkg json config at runtime
+ * - [x] call depflip on postinstall
+ * - [x] ensure all tests work
  * - test by installing in another package, release as alpha,
  *  - OR read its own pkg config hahah
  *
@@ -40,7 +40,6 @@ let shushed = {}
  *    continue
  */
 
-
 class LogChain extends ChainedMapExtendable {
 
   /**
@@ -48,25 +47,17 @@ class LogChain extends ChainedMapExtendable {
    */
   constructor(parent) {
     super(parent)
-
+    delete this.inspect
     this.version = '0.2.0'
 
     // this extending is 0microseconds
-    this.extend([
-      'title',
-      'color',
-    ])
-    this.extendTrue([
-      'space',
-      'tosource',
-      'time',
-      'silent',
-    ])
+    this.extend(['title', 'color'])
+    this.extendTrue(['space', 'tosource', 'time', 'silent'])
 
     this.resets = []
     this.presets = {}
     this.log = this.echo
-
+    this.shh = shh
     this.handleParent(parent)
 
     return this
@@ -87,6 +78,10 @@ class LogChain extends ChainedMapExtendable {
    * @return {FlipLog}
    */
   use(obj) {
+    if (typeof obj === 'function' && Object.keys(obj).length === 0) {
+      obj = obj(this)
+    }
+
     if (this.deps === undefined) {
       this.deps = []
     }
@@ -98,7 +93,8 @@ class LogChain extends ChainedMapExtendable {
       if (obj.name && this.get('used').includes(obj.name)) {
         return this
       }
-    } else if (obj.name !== undefined) {
+    }
+    else if (obj.name !== undefined) {
       this.used(obj.name)
       delete obj.name
     }
@@ -158,10 +154,12 @@ class LogChain extends ChainedMapExtendable {
    * @return {FlipLog}
    */
   new(hardReset = false) {
-    // if using hard reset, do not inherit
-    const logChain = new LogChain(hardReset ? null : this)
+    return this
 
-    return logChain
+    // if using hard reset, do not inherit
+    // const logChain = new LogChain(hardReset ? null : this)
+
+    // return logChain
 
     // const expose = require('expose-hidden')
 
@@ -188,8 +186,7 @@ class LogChain extends ChainedMapExtendable {
     if (!this.savedLog) this.savedLog = []
     // const timer = require('fliptime')
     // timer.start('reset')
-    this
-      .delete('silent')
+    this.delete('silent')
       .delete('title')
       .delete('tosource')
       .delete('text')
@@ -208,7 +205,6 @@ class LogChain extends ChainedMapExtendable {
 
     return this
   }
-
 
   // ----------------------------- adding data ------------------
 
@@ -230,9 +226,7 @@ class LogChain extends ChainedMapExtendable {
       return this.set('verbose', false)
     }
 
-    return this
-      .set('data', data)
-      .set('verbose', true)
+    return this.set('data', data).set('verbose', true)
   }
 
   /**
@@ -361,8 +355,8 @@ class LogChain extends ChainedMapExtendable {
     if (datas !== OFF && text === OFF) {
       console.log(datas)
     }
-    // no data, just text
     else if (datas === OFF && text !== OFF) {
+      // no data, just text
       console.log(text)
     }
     else if (datas !== OFF && text !== OFF) {
@@ -381,6 +375,7 @@ class LogChain extends ChainedMapExtendable {
   }
 
   /**
+   * @since 0.1.0
    * @TODO: should call middleware instead of hardcoded methods
    *
    * @private
@@ -407,7 +402,6 @@ class LogChain extends ChainedMapExtendable {
     if (this.has('text') === true) {
       text = this.getTime(text)
     }
-
 
     if (this.has('spaces') === true) {
       text += this.logSpaces()
@@ -437,7 +431,6 @@ class LogChain extends ChainedMapExtendable {
     return data
   }
 }
-
 
 // ----------------------------- instantiate ------------------
 

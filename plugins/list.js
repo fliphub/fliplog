@@ -1,9 +1,37 @@
 module.exports = {
   deps: {
-    'listr': '0.11.0',
+    listr: '0.11.0',
   },
-  list() {
-    const listr = require('listr')
+  // reset() {},
+  addListItem(title, task, enabled, disabled) {
+    if (this.has('list') === false) {
+      this.set('list', [])
+    }
+
+    let item = {}
+
+    // passing in an object
+    if (typeof title === 'object' && typeof title !== 'function') {
+      item = title
+    }
+    else {
+      item = {title, task, enabled, disabled}
+    }
+
+    this.get('list').push(item)
+
     return this
+  },
+  startListr() {
+    const Listr = require('listr')
+    const list = new Listr()
+    list.run()
+
+    // this.set('listr', list)
+    this.delete('list')
+    return this
+  },
+  listr() {
+    return require('listr')
   },
 }

@@ -1,5 +1,9 @@
 
-// https://github.com/lukeed/obj-str
+/**
+ * @tutorial https://github.com/lukeed/obj-str
+ * @param  {Object} obj
+ * @return {string}
+ */
 function objToStr(obj) {
   let cls = ''
   for (const k in obj) {
@@ -27,6 +31,7 @@ const clrs = [
   'white',
   'gray',
   'red',
+  'dim',
 ]
 const bgColors = [
   'bgBlack',
