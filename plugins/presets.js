@@ -31,6 +31,9 @@ module.exports = {
    */
   addPreset(name, preset) {
     this.presets[name] = preset
+    if (this[name] === undefined) {
+      this[name] = this.preset(name)
+    }
     return this
   },
 

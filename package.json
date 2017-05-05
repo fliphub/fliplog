@@ -5,7 +5,7 @@
     "latest"
   ],
   "name": "fliplog",
-  "version": "0.2.0-beta.18",
+  "version": "0.2.4",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [
@@ -31,6 +31,9 @@
     "index.js",
     "config.js",
     "tagged.js",
+    "deps/",
+    "middleware/",
+    "plugins/",
     "deps",
     "middleware",
     "plugins"

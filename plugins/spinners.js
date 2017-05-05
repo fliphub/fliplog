@@ -7,11 +7,16 @@ module.exports = {
     'ora': '1.2.0',
   },
 
-  // https://github.com/sindresorhus/log-update
-  // https://github.com/sindresorhus/ora
-  // https://github.com/sindresorhus/speed-test
+  /**
+   * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#ora
+   * @see https://github.com/sindresorhus/log-update
+   * @see https://github.com/sindresorhus/ora
+   * @see https://github.com/sindresorhus/speed-test
+   * @param  {Object} [options={}] ora options
+   * @param  {String} [dots='dots1']
+   * @return {Object} ora instance
+   */
   ora(options = {}, dots = 'dots1') {
-    // const cliSpinners = require('cli-spinners')
     const ora = require('ora')
     ora.fliplog = this
 
@@ -26,12 +31,15 @@ module.exports = {
     return this.Spinner
   },
 
-  // @TODO: pr it to update examples...
-  // https://www.npmjs.com/package/cli-spinner#demo
-  // '<^>v'
-  // '|/-\\'
-  // spinner(message = 'flipping...', chars = )
-
+  /**
+   * '<^>v', '|/-\\'
+   * @see FlipLog.ora, FlipLog.startSpinners
+   * @example `.spinner(message = 'flipping...', chars = )`
+   * @see https://www.npmjs.com/package/cli-spinner#demo
+   * @param  {String} [text='flipping...'] [description]
+   * @param  {Object} [opts={}]            [description]
+   * @return {Object} spinner
+   */
   spinnerFactory(text = 'flipping...', opts = {}) {
     opts.text = text
 
@@ -54,7 +62,12 @@ module.exports = {
     return spinner
   },
 
-  // https://github.com/werk85/node-html-to-text
+  /**
+   * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#-multiple
+   * @see https://github.com/werk85/node-html-to-text
+   * @param  {Array<string> | any} [frames=OFF]
+   * @return {FlipLog} @chainable
+   */
   startSpinners(frames = OFF) {
     let opts = {}
 
@@ -92,9 +105,6 @@ module.exports = {
       ]
     }
     else if (Array.isArray(frames)) {
-      // else if (typeof frames === 'string') {
-      //   opts.frames = frames
-      // }
       opts.frames = frames
     }
     else if (typeof frames === 'object') {
@@ -110,14 +120,26 @@ module.exports = {
     return this
   },
 
+  /**
+   * @see FlipLog.startSpinners
+   * @return {FlipLog} @chainable
+   */
   stopSpinners() {
     this.spinnersStarted = false
     this.spinners.success()
     return this
   },
 
+  /**
+   * @see FlipLog.startSpinners
+   * @param {string} name
+   * @param {string} [text='flipping...']
+   * @param {Object} [opts={}]
+   * @return {FlipLog} @chainable
+   */
   addSpinner(name, text = 'flipping...', opts = {}) {
     opts.text = text
+
     this.spinners = this.spinners || {}
     this.spinnerOpts = this.spinnerOpts || {}
     this.spinnerOpts[name] = text
@@ -125,6 +147,10 @@ module.exports = {
     return this
   },
 
+  /**
+   * @param  {String} [name='all'] spinner to remove, default remove all
+   * @return {FlipLog} @chainable
+   */
   removeSpinner(name = 'all') {
     // safety
     this.spinners = this.spinners || {success() {}}

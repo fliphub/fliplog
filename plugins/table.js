@@ -3,9 +3,9 @@ module.exports = {
     'cli-table2': '0.2.0',
   },
 
-  reset() {
-    // this.delete('table')
-  },
+  // reset() {
+  //   // this.delete('table')
+  // },
 
   /**
    * @tutorial https://github.com/fliphub/fliplog#-tables

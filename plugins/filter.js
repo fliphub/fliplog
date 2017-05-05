@@ -6,16 +6,28 @@ module.exports = {
     this.delete('tags')
   },
 
-  // @TODO:
-  // wildcard, best using [] instead
-  // use debugFor.js
-  // enableTags, disableTags
-  // handle keys here...
+  /**
+   * @TODO
+   * - [ ] wildcard, best using [] instead
+   * - [ ] use debugFor.js
+   * - [ ] enableTags, disableTags
+   * - [ ] handle keys here...
+   *
+   * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#-filtering
+   * @param {string | Array<string> | Function} filters filter white or black flags
+   * @return {FlipLog} @chainable
+   */
   filter(filters) {
     toarr = toarr ? toarr : require('to-arr')
     const filter = toarr(filters).concat(this.get('filters') || [])
     return this.set('filter', filter)
   },
+
+  /**
+   * @desc tag the log for filtering when needed
+   * @param {string | Array<string>} names tags to use
+   * @return {FlipLog} @chainable
+   */
   tags(names) {
     toarr = toarr ? toarr : require('to-arr')
     const tags = this.get('tags') || []
@@ -23,7 +35,11 @@ module.exports = {
     return this.set('tags', updated)
   },
 
-  // check if the filters allow the tags
+  /**
+   * @protected
+   * @desc check if the filters allow the tags
+   * @return {FlipLog} @chainable
+   */
   _filter() {
     shouldFilter = shouldFilter ? shouldFilter : require('../deps/filter')
 

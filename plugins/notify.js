@@ -23,11 +23,14 @@ module.exports = {
         title: options,
         message: msg,
       })
-    } else if (typeof options === 'string' && msg === true) {
+    }
+    else if (typeof options === 'string' && msg === true) {
       notifier.notify(options)
-    } else if (echo === true) {
+    }
+    else if (echo === true) {
       notifier.notify(options)
-    } else {
+    }
+    else {
       return this.set('data', {
         inspect() {
           notifier.notify(options)

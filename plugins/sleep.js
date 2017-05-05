@@ -8,7 +8,8 @@ module.exports = {
   },
 
   reset() {
-    this.delete('sleepBetween')
+    // @NOTE: this should not be deleted o.o
+    // this.delete('sleepBetween')
   },
 
   /**
@@ -46,7 +47,7 @@ module.exports = {
    * @return {FlipLog}
    */
   sleepIfNeeded() {
-    if (this.has('sleepBetween')) {
+    if (this.has('sleepBetween') === true) {
       this.sleepfor(this.get('sleepBetween'))
     }
 

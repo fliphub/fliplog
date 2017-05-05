@@ -12,11 +12,16 @@ module.exports = {
     return this
   },
 
-  // credit to https://github.com/challenger532 for this
-  // take in 2 things to diff
-  // can pass in a diff1 and then call diff again to diff again
+  /**
+   * @desc
+   *  take in 2 things to diff
+   *  can pass in a diff1 and then call diff again to diff again
+   *
+   * @author https://github.com/challenger532 for this
+   * @return {FlipLog} @chainable
+   */
   diff() {
-    const clone = require('lodash.clonedeep')
+    const clone = require('lodash.clonedeep') // eslint-disable-line
 
     if (this.has('diffs') === false) {
       this.set('diffs', [])
@@ -27,6 +32,12 @@ module.exports = {
 
     return this.set('diffs', diffs.concat(args))
   },
+
+  /**
+   * @see FlipLog.diff
+   * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#%EF%B8%8F-diff
+   * @return {string} table of diffs
+   */
   diffs() {
     const Table = require('cli-table2')
     const deepDiff = require('deep-diff')
@@ -54,6 +65,7 @@ module.exports = {
       table.push(data)
       tables += table.toString()
     }
+
     return this.data(tables)
   },
 }

@@ -4,9 +4,11 @@ module.exports = {
   },
 
   /**
+   * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#xterm
+   * @see cli-color
    * @param  {number} color
    * @param  {number} [bgColor]
-   * @return {FlipLog}
+   * @return {FlipLog} @chainable
    */
   xterm(color, bgColor) {
     const clc = require('cli-color')
