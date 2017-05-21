@@ -1,4 +1,4 @@
-const colorConvert = require('color-convert')
+const colorConvert = require('../')('color-convert')
 
 const wrapAnsi16 = (fn, offset) =>
   function() {

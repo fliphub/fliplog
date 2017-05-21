@@ -14,13 +14,15 @@ const inspector = (msg, depth = 30, opts = {}) => {
   try {
     const inspected = util.inspect(msg, opts)
     return inspected
-  } catch (e) {
+  }
+  catch (e) {
     console.log(e)
     try {
-      const stringify = require('javascript-stringify')
+      const stringify = require('../javascript-stringify')
       const stringified = stringify(msg, null, '  ')
       return stringified
-    } catch (error) {
+    }
+    catch (error) {
       return msg
     }
   }

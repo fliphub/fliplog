@@ -1,4 +1,4 @@
-var kindOf = require('kind-of')
+var kindOf = require('../kind-of')
 var utils = require('./utils')
 
 /**

@@ -1,6 +1,7 @@
-var escapeStringRegexp = require('escape-string-regexp')
-var ansiStyles = require('ansi-styles')
+var ansiStyles = require('../ansi-styles')
 var supportsColor = require('./supports-color')
+
+var escapeStringRegexp = str => str.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
 
 var defineProps = Object.defineProperties
 var isSimpleWindowsTerm =
