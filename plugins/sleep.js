@@ -3,9 +3,9 @@
  */
 module.exports = {
   // ----------------------------- sleeping ------------------
-  deps: {
-    'sleepfor': '*',
-  },
+  // deps: {
+  //   'sleepfor': '*',
+  // },
 
   reset() {
     // @NOTE: this should not be deleted o.o
@@ -17,7 +17,7 @@ module.exports = {
    * @return {Function} sleepfor
    */
   sleepfor(args = false) {
-    const sleepfor = require('sleepfor')
+    const sleepfor = this.requirePkg('sleepfor')
 
     if (args !== false) sleepfor(args)
 

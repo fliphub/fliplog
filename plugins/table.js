@@ -14,19 +14,19 @@ module.exports = {
    * @return {FlipLog}
    */
   table(head, data) {
-    const Table = require('cli-table2')
+    const Table = this.requirePkg('cli-table2')
 
-    this.row = row => this.table.push(data)
+    this.row = row => this.Table.push(data)
 
     if (!data) {
       let table = new Table({head})
-      this.table = table
+      this.Table = table
       return this
     }
 
     let table = new Table({head})
     table.push(data)
-    this.table = table
+    this.Table = table
 
     return this.data(table.toString())
   },

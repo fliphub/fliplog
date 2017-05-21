@@ -1,7 +1,7 @@
 module.exports = {
-  deps: {
-    'beeper': '1.1.1',
-  },
+  // deps: {
+  //   'beeper': '1.1.1',
+  // },
 
   /**
    * @tutorial https://www.npmjs.com/package/beeper
@@ -10,7 +10,7 @@ module.exports = {
    * @return {Object}
    */
   beep(sequence = 3, echo = false) {
-    const beep = require('beeper') // eslint-disable-line
+    const beep = this.requirePkg('beeper') // eslint-disable-line
 
     const data = {
       inspect() {

@@ -1,13 +1,9 @@
-const {
-  random,
-  shuffle,
-  chance,
-} = require('../deps/fun')
+const {random, shuffle, chance} = require('../deps/fun')
 
 module.exports = {
-  deps: {
-    'babar': '0.1.0',
-  },
+  // deps: {
+  //   'babar': '0.1.0',
+  // },
 
   reset() {
     this.barStyles()
@@ -51,7 +47,7 @@ module.exports = {
         [4, random(0, 15)],
       ]
     }
-    const babar = require('babar')
+    const babar = this.requirePkg('babar')
     const data = babar(input, styles)
     return this.set('data', data)
   },

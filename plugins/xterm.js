@@ -1,7 +1,7 @@
 module.exports = {
-  deps: {
-    'cli-color': '1.2.0',
-  },
+  // deps: {
+  //   'cli-color': '1.2.0',
+  // },
 
   /**
    * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#xterm
@@ -11,7 +11,9 @@ module.exports = {
    * @return {FlipLog} @chainable
    */
   xterm(color, bgColor) {
-    const clc = require('cli-color')
+    const clc = this.requirePkg('cli-color')
+
+    if (!clc) return this
 
     if (typeof color === 'string' && color.includes('.')) {
       const colorArr = color.split('.')

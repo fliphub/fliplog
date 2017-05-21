@@ -1,7 +1,7 @@
 module.exports = {
-  deps: {
-    'node-notifier': '5.1.2',
-  },
+  // deps: {
+  //   'node-notifier': '5.1.2',
+  // },
 
   /**
    * @tutorial https://github.com/fliphub/fliplog#-notify
@@ -14,10 +14,12 @@ module.exports = {
    * @return {FlipLog}
    */
   notify(options, msg = null, echo = false) {
-    const notifier = require('node-notifier')
+    const notifier = this.requirePkg('node-notifier') // eslint-disable-line
 
     if (
-      typeof options === 'string' && typeof msg === 'string' && echo === true
+      typeof options === 'string' &&
+      typeof msg === 'string' &&
+      echo === true
     ) {
       notifier.notify({
         title: options,
