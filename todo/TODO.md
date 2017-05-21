@@ -1,4 +1,5 @@
 
+https://www.ibm.com/blogs/bluemix/2015/03/node-js-better-logging/
 # lightweight
 add lightweight mode (flipshake)
 
