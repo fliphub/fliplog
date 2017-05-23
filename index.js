@@ -439,7 +439,7 @@ class LogChain extends ChainedMapExtendable {
       this.stack()
     }
 
-    if (this.has('tags') === true) {
+    if (this.has('tags') === true || this.has('filter') === true) {
       this._filter()
     }
 

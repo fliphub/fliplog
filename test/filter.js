@@ -15,21 +15,18 @@ const log = require('../')
 // blank means yes, unless another tag overrides?
 // but that is silly since it is default
 
-log
-  .filter((args) => {
-    console.log(args)
-    console.log('---\n')
-  })
+log.filter(args => {
+  console.log(args)
+  console.log('---\n')
+  return false
+})
 
-const arg1 = log
-.tags('args,canada')
-.text('args')
-.return()
+const arg1 = log.tags('args,canada').text('args').return()
 
-const arg2 = log
-.tags('me')
-.text('me')
-.return()
+const arg2 = log.tags('me').text('me').return()
+
+const eh = log.green('eh').echo()
+
 // .echo()
 
 // console.log(arg1, arg2)
