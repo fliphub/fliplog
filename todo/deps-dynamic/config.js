@@ -34,7 +34,6 @@ const presets = {
     middleware: [],
     extends: ['min'],
     plugins: [
-      'bar',
       'sparkly',
       // (g)ui - extends cli
       'diff',
@@ -47,6 +46,7 @@ const presets = {
     middleware: [],
     extends: ['min'],
     plugins: [
+      'bar',
       'formatter',
       'json',
       'time',

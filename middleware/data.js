@@ -1,18 +1,10 @@
-const {inspector} = require('inspector-gadget')
+const {inspector} = require('../modules/inspector-gadget')
+const {OFF} = require('../deps')
 
 module.exports = {
-
-  /**
-   * @tutorial https://www.npmjs.com/package/expose-hidden
-   * @param  {Boolean} [shouldExpose=true]
-   * @return {FlipLog}
-   */
-  expose(shouldExpose = true) {
-    return this.set('expose', shouldExpose)
-  },
-
   /**
    * @protected
+   * @TODO should be formatters
    * @see FlipLog.tosource, FlipLog.highlight
    * @param  {any} msg
    * @return {string}
@@ -22,7 +14,7 @@ module.exports = {
 
     // typeof msg === 'object' &&
     if (this.has('tosource') === true) {
-      const tosource = require('tosource')
+      const tosource = this.requirePkg('tosource')
       if (highlighter) return highlighter(tosource(msg))
       return tosource(msg)
     }
@@ -39,10 +31,16 @@ module.exports = {
    * @return {string | any}
    */
   getVerbose(msg) {
+    if (msg === OFF) return msg
+
     if (this.has('verbose') === true && typeof msg !== 'string') {
-      const PrettyError = require('pretty-error')
+      const PrettyError = this.requirePkg('pretty-error')
+      if (!PrettyError) {
+        return inspector(msg, this.get('verbose'))
+      }
+
       let error = false
-      if (msg && msg.stack) {
+      if (msg && msg.stack && msg.message && msg instanceof Error) {
         const pe = new PrettyError()
         error = console.log(pe.render(msg))
         delete msg.stack

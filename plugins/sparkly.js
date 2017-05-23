@@ -1,15 +1,12 @@
-const {
-  random,
-  shuffle,
-  chance,
-} = require('../deps/fun')
+const {random, shuffle, chance} = require('../deps/fun')
 
 module.exports = {
-  deps: {
-    'sparkly': '3.1.2',
-  },
+  // deps: {
+  //   'sparkly': '3.1.2',
+  // },
   sparkly(input = null, options = null) {
-    const sparkly = require('sparkly')
+    const sparkly = this.requirePkg('sparkly')
+    if (!sparkly) return this
 
     if (input === null) {
       // order from random

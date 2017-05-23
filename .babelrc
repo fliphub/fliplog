@@ -1,0 +1,14 @@
+{
+  "presets": [
+    "babel-preset-babili",
+    [
+      "env",
+      {
+        "targets": {
+          "node": "current",
+          "uglify": true
+        }
+      }
+    ]
+  ]
+}

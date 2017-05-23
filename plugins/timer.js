@@ -1,37 +1,33 @@
+let fliptime
+
 module.exports = {
-  deps: {
-    'fliptime': '*',
-  },
+  // deps: {
+  //   'fliptime': '*',
+  // },
 
   // ----------------------------- timer ------------------
-
+  fliptime() {
+    fliptime = fliptime || this.requirePkg('fliptime')
+    return fliptime
+  },
   startTimer(name) {
-    const fliptime = require('fliptime')
-    fliptime.start(name)
+    this.fliptime().start(name)
     return this
   },
   stopTimer(name) {
-    const fliptime = require('fliptime')
-    fliptime.stop(name)
+    this.fliptime().stop(name)
     return this
   },
   lapTimer(name) {
-    const fliptime = require('fliptime')
-    fliptime.lap(name)
+    this.fliptime().lap(name)
     return this
   },
-  fliptime(name) {
-    const fliptime = require('fliptime')
-    return fliptime
-  },
   echoTimer(name) {
-    const fliptime = require('fliptime')
-    fliptime.log(name)
+    this.fliptime().log(name)
     return this
   },
   stopAndEchoTimer(name) {
-    const fliptime = require('fliptime')
-    fliptime.stop(name).log(name)
+    this.fliptime().stop(name).log(name)
     return this
   },
 }

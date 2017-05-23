@@ -1,6 +1,6 @@
 module.exports = {
   deps: {
-    'boxen': '1.0.0',
+    boxen: '1.0.0',
   },
 
   reset() {
@@ -35,7 +35,11 @@ module.exports = {
    * @return {FlipLog}
    */
   box(input, options, echo = false) {
-    const boxen = require('boxen')
+    const boxen = this.requirePkg('boxen')
+    if (boxen === false) {
+      return this
+    }
+
     const box = boxen(input, options || this.get('boxStyles'))
 
     if (options && options.default === true) {

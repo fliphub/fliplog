@@ -58,7 +58,7 @@ module.exports = {
    */
   getLogWrapFn(color = null) {
     // deps
-    const chalk = require('chalk')
+    const chalk = this.requirePkg('chalk')
     let logWrapFn = chalk
 
     // variable
@@ -103,7 +103,7 @@ module.exports = {
    */
   getTime(msg) {
     if (this.has('time') === true && this.get('time') === true) {
-      const chalk = require('chalk')
+      const chalk = this.requirePkg('chalk')
 
       const data = new Date()
 

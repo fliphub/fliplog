@@ -1,11 +1,4 @@
 module.exports = {
-  deps: {
-    'lodash.clonedeep': '4.5.0',
-    'cli-table2': '0.2.0',
-    'tosource': '0.2.0',
-    'deep-diff': '0.3.4',
-  },
-
   reset() {
     this.delete('diffs')
 
@@ -21,7 +14,7 @@ module.exports = {
    * @return {FlipLog} @chainable
    */
   diff() {
-    const clone = require('lodash.clonedeep') // eslint-disable-line
+    const clone = this.requirePkg('lodash.clonedeep') // eslint-disable-line
 
     if (this.has('diffs') === false) {
       this.set('diffs', [])
@@ -30,42 +23,37 @@ module.exports = {
     const diffs = this.get('diffs')
     const args = Array.from(arguments).map(arg => clone(arg))
 
-    return this.set('diffs', diffs.concat(args))
+    this.set('diffs', diffs.concat(args))
+
+    this.formatter(() => {
+      const differ = this.requirePkg('diffs')
+      const result = differ(...this.get('diffs'))
+
+      // console.log('result?', result)
+      if (this.has('text') === false) {
+        this.bold('diff:\n\n')
+      }
+
+      return result
+    })
+
+    return this
   },
 
   /**
+   * @depreciated @depricated v0.3.0
    * @see FlipLog.diff
    * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#%EF%B8%8F-diff
    * @return {string} table of diffs
    */
   diffs() {
-    const Table = require('cli-table2')
-    const deepDiff = require('deep-diff')
-    const tosource = require('tosource')
-    const colWidths = [200, 200, 200]
+    const differ = this.requirePkg('diffs')
+    const result = differ(...this.get('diffs'))
 
-    const _diffs = this.get('_diffs')
-    const diff = deepDiff(_diffs.pop(), _diffs.pop())
-
-    if (!diff) return this.data('no diff')
-    const heads = diff.map(Object.keys)
-    const datas = diff.map(Object.values)
-    let tables = ''
-
-    // console.log({heads, datas})
-    for (const i in heads) {
-      const head = heads[i]
-      const data = datas[i].map(d => tosource(d))
-      // console.log({head, data})
-
-      const table = new Table({
-        head,
-        // colWidths,
-      })
-      table.push(data)
-      tables += table.toString()
+    // console.log('result?', result)
+    if (this.has('text') === false) {
+      this.bold('diff:\n\n')
     }
-
-    return this.data(tables)
+    return this.data(result)
   },
 }

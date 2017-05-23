@@ -1,19 +1,13 @@
-const ChainedMapExtendable = require('flipchain/ChainedMapExtendable.js')
+const ChainedMapExtendable = require('chain-able/ChainedMapExtendable')
 const {OFF, objToStr} = require('./deps')
-const configs = require('./config')
-const DynamicDeps = require('./deps/DynamicDeps')
+const pluginObjs = Object.assign(require('./plugins'), require('./middleware'))
 
-const pkgDebug =
-  (configs.pkg !== undefined &&
-    configs.pkg.fliplog !== undefined &&
-    configs.pkg.fliplog.debug === true) ||
-  process.argv.includes('--fliplog')
-
-const plugins = configs.exportee
 const shh = {
   shushed: false,
 }
 let shushed = {}
+let required = {}
+let scoped = {}
 
 /**
  *
@@ -34,21 +28,20 @@ let shushed = {}
  * lower priority since it's a fair bit of work to mock this
  * unless it can be done with Reflection/Proxy??
  *
- * - add safety to each function so check if dep is installed,
+ * - [x] add safety to each function so check if dep is installed,
  *    if not, log that it was installed
  *    add to pkgjson config if it has one
  *    continue
  */
 
 class LogChain extends ChainedMapExtendable {
-
   /**
    * @param  {any} parent
    */
   constructor(parent) {
     super(parent)
     delete this.inspect
-    this.version = '0.2.0'
+    this.version = '0.3.0'
 
     // this extending is 0microseconds
     this.extend(['title', 'color'])
@@ -59,8 +52,51 @@ class LogChain extends ChainedMapExtendable {
     this.log = this.echo
     this.shh = shh
     this.handleParent(parent)
+    // this.clr = require('chalk')
 
     return this
+  }
+
+  /**
+   * @inheritdoc
+   * @see this.factory
+   */
+  static factory(instance = null) {
+    return new LogChain(instance).factory(instance)
+  }
+
+  /**
+   * @since 0.3.0
+   * @TODO could be .scoped and then pass in debug here...
+   * @desc creates a new instance
+   * @param {FlipLog | null} [instance=null] specific instance, or new one
+   * @return {FlipLog} @chainable
+   */
+  factory(instance = null) {
+    const plugins = Object.keys(pluginObjs)
+    const log = instance || new LogChain()
+
+    for (let u = 0; u < plugins.length; u++) {
+      const key = plugins[u]
+      log.use(pluginObjs[key])
+    }
+
+    if (instance !== null && typeof instance === 'string') {
+      scoped[instance] = log
+    }
+
+    return log.reset()
+  }
+
+  /**
+   * @since 0.3.0
+   * @desc adds to the scope, or gets from the scope :-}
+   * @param  {string} name
+   * @return {FlipLog} @chainable
+   */
+  scope(name) {
+    scoped[name] = scoped[name] || this
+    return scoped[name]
   }
 
   /**
@@ -69,6 +105,38 @@ class LogChain extends ChainedMapExtendable {
    */
   used(name) {
     return this.set('used', (this.get('used') || []).concat([name]))
+  }
+
+  /**
+   * @desc safely require a dependency if it exists
+   *       if not, use the one in modules
+   * @param  {string} name dependency package npm name
+   * @return {false | Object | any} dependency required
+   */
+  requirePkg(name) {
+    // if we've already included it - may need to set as require.resolve
+    if (required[name]) {
+      // return require(name) // eslint-disable-line
+      return required[name] // eslint-disable-line
+    }
+
+    // wrap require
+    const dep = require('./modules')(name)
+
+    // warn and safely handle missing pkgs
+    if (!dep) {
+      const colored = this.colored(name)
+      this.text('did not have package ' + colored)
+        .data(`npm i ${colored} --save-dev \n yarn add ${colored} --dev`)
+        .echo()
+      return false
+    }
+
+    // store result for later
+    required[name] = dep
+
+    // return dep
+    return dep
   }
 
   /**
@@ -122,6 +190,11 @@ class LogChain extends ChainedMapExtendable {
     const keys = Object.keys(obj)
     for (let k = 0; k < keys.length; k++) {
       const key = keys[k]
+      if (key === 'deps' || typeof obj[key].bind !== 'function') {
+        // console.log({key}, 'not bindable')
+        continue
+      }
+
       this[key] = obj[key].bind(this)
     }
 
@@ -150,10 +223,17 @@ class LogChain extends ChainedMapExtendable {
   }
 
   /**
+   * @TODO needs work to make it a function again
    * @param  {Boolean} [hardReset=false]
    * @return {FlipLog}
    */
   new(hardReset = false) {
+    function LogChainFn(args = null) {
+      if (args === null || args instanceof ChainedMapExtendable) {
+        const log = new LogChain(args)
+        return log.factory(log)
+      }
+    }
     return this
 
     // if using hard reset, do not inherit
@@ -234,10 +314,6 @@ class LogChain extends ChainedMapExtendable {
    * @return {FlipLog}
    */
   data(arg) {
-    if (this.has('formatter') === true) {
-      arg = this.get('formatter')(arg)
-    }
-
     if (arguments.length === 1) {
       return this.set('data', arg)
     }
@@ -292,56 +368,32 @@ class LogChain extends ChainedMapExtendable {
   // ----------------------------- actual output ------------------
 
   /**
-   * @param  {boolean} [data=OFF] `false` will make it not output
-   * @return {FlipLog}
+   * @since 0.3.0
+   * @desc to reduce complexity in echo function
+   * @return {FlipLog} @chainable
    */
-  echo(data = OFF) {
-    // const timer = require('fliptime')
-    // timer.start('echo-new')
-
-    if (this.stack !== null && this.stack !== undefined) {
-      this.stack()
-    }
-
-    if (this.has('tags') === true) {
-      this._filter()
-    }
-
-    // don't call any formatter middleware, reset state, perf
-    if (data === false) {
-      this.reset()
-      return this
-    }
-
-    // data is default, use the stored data
-    if (data === OFF) {
-      data = this.get('data')
-    }
-
+  echoShushed() {
     // everything is silent everywhere,
     // store log with formatter,
     // reset
-    if (shh.shushed === true) {
-      const text = this.logText()
-      const datas = this.logData()
-      shushed[Date.now] = {text, datas}
-      this.shushed = shushed
-      this.reset()
-      return this
-    }
+    this.finalize()
+    const text = this.logText()
+    const datas = this.logData()
+    shushed[Date.now] = {text, datas}
+    this.shushed = shushed
+    this.reset()
+    return this
+  }
 
-    // don't call any formatter middleware, silent
-    if (this.has('silent') === true) {
-      this.reset()
-      return this
-    }
-
-    // if we are using sleep plugin
-    if (this.sleepIfNeeded !== undefined) {
-      this.sleepIfNeeded()
-    }
-
+  /**
+   * @since 0.3.0
+   * @see this.echo, this.finalize, this.logText, this.logData, this.reset
+   * @desc the actual internal `console.log`ing
+   * @return {FlipLog} @chainable
+   */
+  echoConsole() {
     // so we can have them on 1 line
+    this.finalize()
     const text = this.logText()
     const datas = this.logData()
 
@@ -369,16 +421,78 @@ class LogChain extends ChainedMapExtendable {
     }
 
     // timer.stop('echo-new').log('echo-new')
-
     this.reset()
     return this
   }
 
   /**
+   * @alias log
+   * @since 0.0.1
+   * @param  {boolean} [data=OFF] `false` will make it not output
+   * @return {FlipLog} @chainable
+   */
+  echo(data = OFF) {
+    // const timer = require('fliptime')
+    // timer.start('echo-new')
+
+    if (this.stack !== null && this.stack !== undefined) {
+      this.stack()
+    }
+
+    if (this.has('tags') === true || this.has('filter') === true) {
+      this._filter()
+    }
+
+    // don't call any formatter middleware, reset state, perf
+    //  || data === 0
+    if (data === false) {
+      this.reset()
+      return this
+    }
+
+    // data is default, use the stored data
+    // if (data === OFF) {
+    //   data = this.get('data')
+    // }
+
+    if (shh.shushed === true) {
+      return this.echoShushed()
+    }
+
+    // don't call any formatter middleware, silent
+    if (this.has('silent') === true) {
+      this.reset()
+      return this
+    }
+
+    // if we are using sleep plugin
+    if (this.sleepIfNeeded !== undefined) {
+      this.sleepIfNeeded()
+    }
+
+    return this.echoConsole()
+  }
+
+  /**
+   * @private
+   * @since 0.3.0
+   * @desc call the formatters and transformers on the data if we are echoing
+   *       so that they are only formatted when echoing
+   * @return {FlipLog} @chainable
+   */
+  finalize() {
+    let arg = this.get('data')
+    if (this.has('formatter') === true) {
+      arg = this.get('formatter')(arg)
+    }
+    return this.set('data', arg)
+  }
+
+  /**
+   * @private
    * @since 0.1.0
    * @TODO: should call middleware instead of hardcoded methods
-   *
-   * @private
+   * @desc does the actuall echoing of the text
    * @return {string}
    */
   logText() {
@@ -411,20 +525,14 @@ class LogChain extends ChainedMapExtendable {
   }
 
   /**
-   * @TODO: should be array of middleware
-   *
    * @private
+   * @TODO: should be array of middleware
+   * @desc returns the data to log
    * @return {any}
    */
   logData() {
     let data = this.get('data')
     if (data === OFF) return OFF
-
-    if (this.get('expose') === true) {
-      const expose = require('expose-hidden')
-      data = expose(data)
-    }
-
     data = this.getToSource(data)
     data = this.getVerbose(data)
 
@@ -435,25 +543,6 @@ class LogChain extends ChainedMapExtendable {
 // ----------------------------- instantiate ------------------
 
 // instantiating + adding + reset = ~10 microseconds
-const log = new LogChain().new()
-
-const dd = new DynamicDeps(pkgDebug)
-for (let u = 0; u < plugins.length; u++) {
-  if (pkgDebug === true) {
-    console.log('using plugin', plugins[u])
-  }
-
-  dd.use(plugins[u])
-  log.use(plugins[u])
-}
-
-dd.installIfNeeded().clean()
-
-if (pkgDebug === true) {
-  console.log('fliplog setup')
-}
-
-log.reset()
-log.pkg = configs.pkg
+const log = new LogChain().factory()
 
 module.exports = log

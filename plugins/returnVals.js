@@ -20,9 +20,15 @@ module.exports = {
 
   /**
    * @tutorial https://github.com/fliphub/fliplog#return
+   * @since 0.2.0 (added param 0.3.0)
+   * @param {boolean} [textAndDataOnly=false]
    * @return {ReturnVal}
    */
-  return() {
+  return(textAndDataOnly = false) {
+    if (textAndDataOnly === true) {
+      return this.returnVals()
+    }
+
     if (this.has('tags') === true) {
       this._filter()
     }

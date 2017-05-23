@@ -2,10 +2,10 @@ const {OFF} = require('../deps')
 
 module.exports = {
   // ----------------------------- spinner ------------------
-  deps: {
-    'multispinner': '0.2.1',
-    'ora': '1.2.0',
-  },
+  // deps: {
+  //   multispinner: '0.2.1',
+  //   ora: '1.2.0',
+  // },
 
   /**
    * @tutorial https://github.com/fliphub/fliplog/blob/master/README.md#ora
@@ -17,7 +17,7 @@ module.exports = {
    * @return {Object} ora instance
    */
   ora(options = {}, dots = 'dots1') {
-    const ora = require('ora')
+    const ora = this.requirePkg('ora')
     ora.fliplog = this
 
     if (typeof options === 'string') {
@@ -111,7 +111,7 @@ module.exports = {
       opts = frames
     }
 
-    const Multispinner = require('multispinner')
+    const Multispinner = this.requirePkg('multispinner')
 
     const spinners = Object.values(this.spinnerOpts)
 
@@ -156,9 +156,10 @@ module.exports = {
     this.spinners = this.spinners || {success() {}}
 
     if (name === 'all') {
-      return Object.values(this.spinnerOpts).forEach(spinner =>
-        this.removeSpinner(spinner)
-      )
+      // Object.values isn't on node 6.10 -.-
+      return Object.keys(this.spinnerOpts)
+        .map(key => this.spinnerOpts[key])
+        .forEach(spinner => this.removeSpinner(spinner))
     }
 
     // key, value

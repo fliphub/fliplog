@@ -51,7 +51,6 @@ module.exports = {
       console.log('Possibly Unhandled Rejection at: Promise ', p, ' reason: ', reason)
       // this.red(p).echo()
       // this.error(reason).echo()
-      console.log('wtf')
       process.exit(1)
       // this.catchAndThrow(reason, p)
     })

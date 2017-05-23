@@ -5,7 +5,7 @@
     "latest"
   ],
   "name": "fliplog",
-  "version": "0.2.4",
+  "version": "0.3.0-beta.5",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [
@@ -36,24 +36,22 @@
     "plugins/",
     "deps",
     "middleware",
-    "plugins"
+    "plugins",
+    "modules"
   ],
   "directories": [
     "deps",
     "middleware",
-    "plugins"
+    "plugins",
+    "modules"
   ],
   "scripts": {
     "test": "node ./test/examples && node ./test/test",
-    "test-all": "node ./test/examples && node ./test/test && node test/boxen && node test/filter && node test/progress && node test/slow && node test/formatter && node test/from && node test/quick",
-    "prepublish": "echo {} > ./deps/cache.json",
-    "magicpublish": "node ./dynamicTags.js",
-    "postinstall": "node ./index.js --postinstallcall",
+    "test-all": "node ./test/examples && node ./test/test && node test/boxen && node test/filter && node test/progress && node test/slow && node test/formatter && node test/from && node test/pretty && node test/diff && node test/dept && node test/quick",
+    "_prepublish": "echo {} > ./deps/cache.json",
+    "_magicpublish": "node ./dynamicTags.js",
+    "_postinstall": "node ./index.js --postinstallcall",
     "test-flags": "node ./test/flags.js"
-  },
-  "engines": {
-    "node": ">= 7.8.0",
-    "npm": ">= 4.2.0"
   },
   "testingDependencies": {
     "clear-require": "*",
@@ -64,18 +62,8 @@
     "lodash.padend": "4.6.1",
     "read-pkg-up": "2.0.0"
   },
-  "devDependencies": {
-    "javascript-stringify": "^1.6.0"
-  },
   "dependencies": {
-    "app-root-path": "^2.0.1",
-    "chalk": "^1.1.3",
-    "expose-hidden": "*",
-    "flipchain": "*",
-    "inspector-gadget": "*",
-    "pretty-error": "^2.0.2",
-    "to-arr": "*",
-    "tosource": "^1.0.0"
+    "chain-able": "^1.0.1"
   },
   "license": "MIT",
   "author": "James <aretecode@gmail.com>",
@@ -86,5 +74,10 @@
   },
   "bugs": {
     "url": "https://github.com/fliphub/fliplog/issues"
+  },
+  "_devDependencies": {
+    "babel-core": "^6.24.1",
+    "babili": "^0.0.12",
+    "fsbx": "^2.1.0-beta.4"
   }
 }

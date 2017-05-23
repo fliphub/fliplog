@@ -1,7 +1,7 @@
 module.exports = {
-  deps: {
-    listr: '0.11.0',
-  },
+  // deps: {
+  //   listr: '0.11.0',
+  // },
   // reset() {},
   addListItem(title, task, enabled, disabled) {
     if (this.has('list') === false) {
@@ -23,7 +23,7 @@ module.exports = {
     return this
   },
   startListr() {
-    const Listr = require('listr')
+    const Listr = this.requirePkg('listr')
     const list = new Listr()
     list.run()
 
@@ -32,6 +32,6 @@ module.exports = {
     return this
   },
   listr() {
-    return require('listr')
+    return this.requirePkg('listr')
   },
 }

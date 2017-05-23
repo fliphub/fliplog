@@ -1,10 +1,14 @@
 module.exports = {
-  deps: {
-    'prettyjson': '1.2.1',
-  },
+  // deps: {
+  //   'prettyjson': '1.2.1',
+  // },
 
-  prettyjson() {
-    return require('prettyjson') // eslint-disable-line
+  prettyjson(data = null, opts = {}) {
+    const prettyjson = this.requirePkg('prettyjson') // eslint-disable-line
+    if (data !== null) {
+      return prettyjson.render(data, opts)
+    }
+    return prettyjson
   },
 
   /**
@@ -14,7 +18,10 @@ module.exports = {
    * @return {FlipLog} @chainable
    */
   json(data, opts = {}) {
-    if (typeof data !== 'object') return this.data(data).verbose(5)
+    if (typeof data !== 'object') {
+      return this.data(data).verbose(5)
+    }
+
     const defaults = {
       keysColor: 'blue',
       dashColor: 'yellow',
@@ -24,9 +31,7 @@ module.exports = {
 
     opts = Object.assign(defaults, opts)
 
-    const prettyjson = this.prettyjson()
-    const prettified = prettyjson.render(data, opts)
-    
-    return this.data(prettified)
+    // return this.data(this.prettyjson().render(data, opts))
+    return this.formatter(() => this.prettyjson().render(data, opts)).data(data)
   },
 }
