@@ -3,15 +3,6 @@ module.exports = {
   //   'prettyjson': '1.2.1',
   // },
 
-  prettyformat(obj) {
-    const format = this.requirePkg('pretty-format')
-    return this.formatter(format).data(obj)
-  },
-  fmtobj(obj) {
-    const format = this.requirePkg('fmt-obj')
-    return this.formatter(format).data(obj)
-  },
-
   prettyjson(data = null, opts = {}) {
     const prettyjson = this.requirePkg('prettyjson') // eslint-disable-line
     if (data !== null) {

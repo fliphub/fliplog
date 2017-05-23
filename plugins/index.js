@@ -15,6 +15,7 @@ const json = require('./json')
 const list = require('./list')
 const notify = require('./notify')
 const presets = require('./presets')
+const pretty = require('./pretty')
 const progress = require('./progress')
 const quick = require('./quick')
 const register = require('./register')
@@ -48,6 +49,7 @@ module.exports = {
   list,
   notify,
   presets,
+  pretty,
   progress,
   quick,
   register,

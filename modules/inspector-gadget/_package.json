@@ -1,16 +1,13 @@
 {
   "name": "inspector-gadget",
   "description": "preconfigured nodejs util for inspecting, and customizing inspecting",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "index.js",
   "files": [
     "index.js",
     "inspector.js",
     "inspector-gadget.js"
   ],
-  "dependencies": {
-    "javascript-stringify": "^1.6.0"
-  },
   "keywords": [
     "flip",
     "inspect",

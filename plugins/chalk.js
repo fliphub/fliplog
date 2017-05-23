@@ -1,5 +1,4 @@
 module.exports = {
-
   /**
    * @since 0.0.1
    * @see chalk
@@ -7,7 +6,13 @@ module.exports = {
    * @return {FlipLog}
    */
   color(color) {
-    return this.set('color', color)
+    let clr = color
+
+    if (this.has('color') === true) {
+      clr = this.get('color') + '.' + color
+    }
+
+    return this.set('color', clr)
   },
 
   /**
@@ -30,6 +35,6 @@ module.exports = {
    * @return {Object} chalk
    */
   chalk() {
-    return require('chalk')
+    return this.requirePkg('chalk')
   },
 }

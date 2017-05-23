@@ -1,6 +1,6 @@
 // https://github.com/rafeca/prettyjson/tree/master/lib
 // ### Module dependencies
-var colors = require('chalk')
+var colors = require('../chalk')
 var Utils = require('./utils')
 
 // Helper function to detect if an object can be directly serializable
