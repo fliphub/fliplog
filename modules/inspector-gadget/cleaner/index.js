@@ -1,5 +1,6 @@
 const ChainedMap = require('chain-able/ChainedMapExtendable')
 const traverse = require('./traverse')
+// const log = require('fliplog')
 
 let clone
 
@@ -31,8 +32,17 @@ class Cleaner extends ChainedMap {
    */
   obj(obj = null) {
     if (!obj) return this
-    clone = clone || require('../../')('lodash.clonedeep')
+    return this.set('obj', obj)
+  }
 
+  /**
+   * @desc clone the object - lodash.cloneDeep can infinitely loop so need a better one
+   * @since fliplog:v0.3.0-beta6
+   * @param  {Object | any} [obj=null]
+   * @return {Cleaner} @chainable
+   */
+  clone(obj = null) {
+    clone = clone || require('../../')('lodash.clonedeep')
     return this.set('obj', clone(obj))
   }
 
@@ -81,6 +91,7 @@ class Cleaner extends ChainedMap {
     if (this.has('onMatch') === false) this.onMatch()
     const debug = this.get('debug')
     const {obj, keys, vals, onMatch} = this.entries()
+    // console.log('starting match...')
     // log.bold('key val matchers').fmtobj({keys, vals}).echo(debug)
 
     // debug this

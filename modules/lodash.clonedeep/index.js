@@ -742,6 +742,7 @@ function stackHas(key) {
  */
 function stackSet(key, value) {
   var cache = this.__data__
+  // console.log({cache})
   if (cache instanceof ListCache) {
     var pairs = cache.__data__
     if (!Map || pairs.length < LARGE_ARRAY_SIZE - 1) {

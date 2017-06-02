@@ -1,5 +1,5 @@
 const signalExit = require('../signal-exit')
-const onetime = require('./onetime')
+const onetime = require('../onetime')
 
 module.exports = onetime(() => {
   signalExit(

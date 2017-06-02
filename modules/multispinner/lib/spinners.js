@@ -4,7 +4,7 @@
 // Modules
 //----------------------------------------------------------
 // NPM
-const kindOf = require('../')('kind-of')
+const kindOf = require('../../')('kind-of')
 
 // Local
 const states = require('./constants').states

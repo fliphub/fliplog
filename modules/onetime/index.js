@@ -1,5 +1,5 @@
 // https://github.com/sindresorhus/onetime
-const mimicFn = require('./mimic-fn')
+const mimicFn = require('../mimic-fn')
 
 module.exports = (fn, opts) => {
   // TODO: Remove this in v3

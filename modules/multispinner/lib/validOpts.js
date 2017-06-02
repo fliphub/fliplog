@@ -2,7 +2,7 @@
 // Modules
 //----------------------------------------------------------
 // NPM
-const kindOf = require('../')('kind-of')
+const kindOf = require('../../')('kind-of')
 // Local
 const errs = require('./errs').validOpts
 const defaultProps = require('./constants').defaultProps

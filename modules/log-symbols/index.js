@@ -1,6 +1,6 @@
 // https://github.com/sindresorhus/log-symbols/blob/master/index.js
 
-var chalk = require('chalk')
+var chalk = require('../')('chalk')
 
 var main = {
   info: chalk.blue('ℹ'),
