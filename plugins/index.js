@@ -1,3 +1,4 @@
+const ansi = require('./ansi')
 const boxen = require('./box')
 const beep = require('./beep')
 const bar = require('./bar')
@@ -31,8 +32,10 @@ const timer = require('./timer')
 const track = require('./track')
 const verbose = require('./verbose')
 const xterm = require('./xterm')
+const expose = require('./expose')
 
 module.exports = {
+  ansi,
   boxen,
   beep,
   bar,
@@ -64,4 +67,5 @@ module.exports = {
   track,
   verbose,
   xterm,
+  expose,
 }
