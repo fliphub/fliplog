@@ -28,6 +28,12 @@ module.exports = {
     }
 
     this.Spinner = ora(options)
+
+    this.spinners = this.spinners || {}
+    this.spinners[
+      options || options.text || Object.keys(this.spinners).length
+    ] = this.Spinner
+
     return this.Spinner
   },
 
@@ -113,7 +119,10 @@ module.exports = {
 
     const Multispinner = this.requirePkg('multispinner')
 
-    const spinners = Object.values(this.spinnerOpts)
+    const spinners = {}
+    Object.keys(this.spinnerOpts).forEach(key => {
+      spinners[key] = this.spinnerOpts[key]
+    })
 
     this.spinners = new Multispinner(spinners, opts)
 
@@ -165,7 +174,12 @@ module.exports = {
     // key, value
     if (this.spinnerOpts[name]) name = this.spinnerOpts[name]
 
-    this.spinners.success(name)
+    try {
+      this.spinners.success(name)
+    }
+    catch (e) {
+      // ignore
+    }
 
     return this
   },
