@@ -1,12 +1,36 @@
 const log = require('../')
 
-// examples
-log.preset('error').data(new Error('prettyfull!')).echo()
+const factoried = log.factory()
+
+const dirMatch = new RegExp(__dirname, 'gmi')
+const logger = (text, data) => {
+  const clean = log
+    .cleaner(true)
+    .vals([dirMatch, x => typeof x === 'string'])
+    .keys([dirMatch])
+    .onMatch((arg, traverser) => arg.replace(dirMatch, 'funfunfun!'))
+    .onNonMatch(arg => {
+      // console.log({arg}, 'nonmatch')
+    })
+    .data({data, text})
+    .clean()
+
+  const cleaned = clean.cleaned()
+  console.log(cleaned.text, cleaned.data)
+}
+
+log
+  .preset('error')
+  .data(new Error('prettyfull!'))
+  .set('logger', logger)
+  .echo()
 
 function traceIt() {
   function stackIt() {
     function louder() {
+      // require.main.filename = 'INTERNAL-TESTS/' + __filename
       const customError = new Error('prettyfull!')
+      customError.stack = customError.stack.replace(/fliplog/, 'INTERNAL-TESTS')
       customError.eh = true
       customError.extraPretty = true
       Object.defineProperty(customError, 'prop', {
@@ -14,6 +38,8 @@ function traceIt() {
         enumerable: true,
         value: 'eh',
       })
+      // log.set('logger', logger)
+
       log.preset('error').data(customError).echo()
     }
     louder()
@@ -21,6 +47,7 @@ function traceIt() {
   stackIt()
 }
 traceIt()
+process.exit()
 
 log
   .text('\n========================================\n')
