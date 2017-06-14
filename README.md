@@ -18,34 +18,21 @@
 
 ![Screenshot](https://cloud.githubusercontent.com/assets/4022631/24160506/46c47d34-0e1f-11e7-8c27-4b653330ae02.png)
 
+[deepdiff]: https://www.npmjs.com/package/deep-diff
+[fmtobj]: https://github.com/queckezz/fmt-obj
+[sprintf]: https://github.com/alexei/sprintf.js
+[prettyformat]: https://github.com/facebook/jest/tree/master/packages/pretty-format
+[ava-prettyformat]: https://github.com/avajs/pretty-format
+[jest-diff]: https://github.com/facebook/jest
+[diff-match-patch]: https://code.google.com/archive/p/google-diff-match-patch/
+[code-prettify]: https://github.com/google/code-prettify
+[chain-able]: https://github.com/fluents/chain-able
+[ansi]: https://github.com/TooTallNate/ansi.js
+[prettysize]: https://github.com/davglass/prettysize
+[listr]: https://github.com/samverschueren/listr
+[treeify]: https://github.com/notatestuser/treeify
+[js-traverse]: https://github.com/substack/js-traverse
 
-------- new ------
-- [ ] ansii
-- [ ] prettyformat
-- [ ] fmtobj
-- [ ] cleaner
-- [ ] chalk
-- [ ] .colored
-- [ ] prettysize
-- [ ] catchAndThrow
-- [ ] listr
-```js
-var obj = {property: {}}
-obj.circularReference = obj
-obj[Symbol('foo')] = 'foo'
-obj.map = new Map()
-obj.map.set('prop', 'value')
-obj.array = [1, NaN, Infinity]
-
-log.prettyformat(obj).echo()
-
-const cleaner = log
-  .cleaner(true)
-  .keys([/array|circularReference|map|property/])
-  .data(obj)
-  .clean()
-  .echo()
-```
 
 ## usage
 ```bash
@@ -59,7 +46,7 @@ const log = require('fliplog')
 
 ## 🔠 description
 
-fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, boxen, stringifying, code highlighting, notifications, beeping, sparkles, slow-mode, formatting, bar charts, & presets
+fluent logging with verbose insight, colors, tables, emoji, deep cleaning, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, boxen, stringifying, code highlighting, notifications, beeping, sparkles, slow-mode, formatting, bar charts, & presets
 
 ## 🗝️ legend:
 - [👋 basics](#-basics)
@@ -77,14 +64,15 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
 - [function](#function)
 - [😊 emoji](#-emoji)
 - [☕ filtering](#-filtering)
+  - [🔢 level](#-level)
+  - [🎯 matcher](#-matcher)
   - [🚩 flags](#filter-tags)
   - [filter](#filter--tags)
   - [tags](#filter--tags)
 - [🛑 quick](#-quick)
 - [⬛ table](#-tables)
+- [🛁 cleaner](#-cleaner)
 - [⚖️ diff](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
-  - [row](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
-  - [diffs](https://github.com/fliphub/fliplog/blob/master/README.md#️-diff)
 - [🌀 spinner](#-spinner)
   - [multi](#-spinner)
   - [ora](#-spinner)
@@ -107,6 +95,7 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
 - [⌛ timestamps](#-timestamps)
 - [from](#from)
 - [🎢 fun](#-fun)
+  - [🌲 tree](#-tree)
   - [📊 bar chart](#-bar)
   - [📦 box](#-box)
   - [📯 beep](#-beep)
@@ -116,7 +105,7 @@ fluent logging with verbose insight, colors, tables, emoji, filtering, spinners,
     - [💱 formatter](#-formatter)
   - [🐌 slow](#-slow)
   - [⏲ timer](#-timer)
-  - [⚡ performance](#-performance)
+  - [⚡ performance](#-performance) (_lightweight configurable dependencies_)
 - [resources](#-resources)
 
 ## 👋 basics
@@ -129,8 +118,20 @@ log
   .echo() // outputs the log, .return to return the formatted values
 ```
 
-🆕 [lightweight configurable dependencies](#-performance)
+# 🆕 NEW!
 
+> 📝📚 all of these new ones need more docs
+
+[📖 read the wip docs for new stuff on the wiki](https://github.com/fliphub/fliplog/wiki/new)
+
+### `+` == `.echo`
+
+
+```js
+log.italic('so short!')+
+
+// ^ same as `log.italic('so short!').echo()`
+```
 
 ## 🎀 stringifying
 ### json
@@ -252,11 +253,43 @@ log
 comma separated strings, or arrays
 a function can also be passed in, the argument will be an object containing the entries [see `flipchain/ChainedMap.entries`](https://www.npmjs.com/package/flipchain#other)
 
+### 🔢 level
+
+filter by log level as a number with simple [comparison operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators)
+
+```js
+log.filter('>= 1')
+log.level(1).bold('above 1... success').echo()
+log.level(0).bold('not above 1...').echo()
+```
+
+### 🎯 matcher
+
+filter using an `Array` made up of `Function`s, `String`s, and `RegExp`s!
+
+```js
+log.filter(['canada*'])
+log.tag('canada-eh').white('canadian, pass.').echo()
+```
+
+more advanced
+```js
+log.filter(['eh*', '!warm', tag => (/ez/).test(tag)])
+log.tag('eh').underline('eh').echo()
+log.tag('warm').red('warm').echo()
+log.tag('ez').yellow('ez').echo()
+```
+
+
+❗ important to note, if only a function is passed in, it will have the entire log instance passed to the argument, rather than the array of tags (for compatibility & simplicity.)
+
+
+### filter & tags
+
 - `verbose` enables everything
 - `silent` silences everything
 - `!` means disabled
 
-### filter & tags
 ```js
 log
   .filter('!nope, yes')
@@ -312,22 +345,60 @@ log
 ```
 
 ## ⚖️ diff
-using [deep-diff](https://www.npmjs.com/package/deep-diff), you can compare before and after data differences as tables. Data will be cloned so it can be mutated and then compared.
+
+![https://github.com/avajs/ava/raw/master/media/magic-assert-combined.png]
+(_uses a fork of [ava-format][ava-format] which is a fork of [jest-diff][jest-diff] which is a fork of [google's diff-match-patch][diff-match-patch]_)
+
+Compare two pieces of data. Data will be cloned so it can be mutated if needed, and then compared.
 
 ```js
-const royalty = {
-  posh: true,
-}
-const lowlyPeasant = {
-  pauper: true,
-}
-
-log.diff(royalty)
-const abomination = deepmerge(royalty, lowlyPeasant)
-log.diff(abomination)
-
-log.diffs().echo()
+let oneOneTwoTwo = 'one-one  was a race horse 🐎 '
+log.diff(oneOneTwoTwo)
+log.diff(oneOneTwoTwo + '... two-two was one, two.')
+log.echo()
 ```
+
+(_previously [deep-diff][deep-diff] & cli-table was used._)
+
+```js
+const royalty = {posh: true}
+const lowlyPeasant = {pauper: true}
+log.diff(royalty)
+const abomination = Object.assign(royalty, lowlyPeasant)
+log.diff(abomination)
+log.echo()
+```
+
+## 🛁 cleaner
+
+extremely powerful tool built with [chain-able][chain-able] using a fork of [js-traverse][js-traverse]
+
+can take next-to-unusable output such as this ![garbage](https://user-images.githubusercontent.com/4022631/27126483-7bd3e21a-50ac-11e7-840a-ea49d3de5176.gif)
+
+and clean it usable
+![cleaned](https://user-images.githubusercontent.com/4022631/27126552-b2a512a0-50ac-11e7-966d-9b92803503f8.png)
+
+...or you could clean out certain phrases from every log
+
+
+```js
+var obj = {property: {}}
+obj.circularReference = obj
+obj[Symbol('foo')] = 'foo'
+obj.map = new Map()
+obj.map.set('prop', 'value')
+obj.array = [1, NaN, Infinity]
+
+log.prettyformat(obj).echo()
+
+const cleaner = log
+  .cleaner(true)
+  .keys([/array|circularReference|map|property/])
+  .data(obj)
+  .clean()
+  .echo()
+```
+
 
 
 ## 🌀 spinner
@@ -513,7 +584,6 @@ calling `.trace` will output a shortened stack trace to the current location.
 log.data({bigData: 'oh'}).trace().echo()
 ```
 
-
 ## ®️ register
 
 ### registerConsole
@@ -675,6 +745,29 @@ log
 
 these will all be silent by default, so you can easily disable them by filtering your logs or setting silent output which can be exceedingly helpful.
 
+## 🌲 tree
+
+<img width="563" alt="screen shot 2017-06-13 at 11 24 29 pm" src="https://user-images.githubusercontent.com/4022631/27118316-8e138d80-508f-11e7-8ce5-d383678ca2a0.png">
+
+```js
+log
+  .color('green')
+  .text('🌲  treeify')
+  .tree({
+    oranges: {
+      mandarin: {
+        clementine: null,
+        tangerine: 'so cheap and juicy!',
+      },
+    },
+    apples: {
+      'gala': null,
+      'pink lady': null,
+    },
+  })
+  .echo()
+```
+
 ### 🎇 sparkly
 
 ![sparkly](https://github.com/sindresorhus/sparkly/blob/master/screenshot.png?raw=true)
@@ -818,6 +911,9 @@ const fliptime = log.fliptime()
 
 allows final formatting of the data before echoing
 
+> ✍ interesting to note, this is how most plugins do their formatting
+
+
 ```js
 function cb(data) {
   if (!data || typeof data !== 'object') return data
@@ -850,7 +946,7 @@ log
 #### ⚙ config
 to keep the module lightweight, almost all functionality is added through plugins.
 
-the dependencies that are installed can be configured by a package json config, or by using magic npm tags which contain the configs.
+<!-- the dependencies that are installed can be configured by a package json config, or by using magic npm tags which contain the configs.
 
 the available options are:
 - `min`,
@@ -872,11 +968,11 @@ npm i --save fliphub@formatting
 ```
 
 
-[see the full preset list](https://github.com/fliphub/fliplog/wiki/dynamic-dependencies)
+[see the full preset list](https://github.com/fliphub/fliplog/wiki/dynamic-dependencies) -->
 
 #### requiring
 
-all non-core dependencies are required when functions are called. this way, only the used-functionality is loaded.
+all non-core dependencies are required when functions are called **& the filtering passes**. this way, only the used-functionality is loaded.
 
 additionally, almost all of the functions are not formatted until `.echo()`, so they will not have dependencies loaded when echoing is false which means code does not have to be changed for production.
 
