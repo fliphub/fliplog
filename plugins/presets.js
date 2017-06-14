@@ -1,9 +1,9 @@
 // presets
 function presetError(chain) {
-  return chain.text('🚨  error:').color('bgRed.black').verbose(10)
+  return chain.text(chain.chalk().bgRed.black('🚨  error: ') + '\n\n').verbose(10)
 }
 function presetWarning(chain) {
-  return chain.text('⚠  warning:').color('bgYellow.black').verbose(10)
+  return chain.text('⚠  warning: ').color('bgYellow.black').verbose(10)
 }
 function presetInfo(chain) {
   return chain.text('ℹ️️  info:').color('blue')
@@ -14,6 +14,19 @@ function presetNote(chain) {
 function presetImportant(chain) {
   return chain.text('❗  important:').color('red.bold')
 }
+
+const ignored = [
+  '__defineGetter__',
+  '__defineSetter__',
+  'hasOwnProperty',
+  '__lookupGetter__',
+  '__lookupSetter__',
+  'propertyIsEnumerable',
+  'toString',
+  'toLocaleString',
+  'valueOf',
+  'isPrototypeOf',
+]
 
 function presetHidden(chain) {
   /* prettier-ignore */
@@ -27,6 +40,7 @@ function presetHidden(chain) {
   const formatter = data =>
     allKeys(Object.getPrototypeOf(data))
     .concat(allKeys(data))
+    .filter(key => !ignored.includes(key))
     .map(key => ({[key]: Object.getOwnPropertyDescriptor(data, key)}))
 
   return chain.verbose(100).formatter(formatter)

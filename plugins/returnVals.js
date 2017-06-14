@@ -5,6 +5,26 @@ module.exports = {
   // ----------------------------- getting data ------------------
 
   /**
+   * @alias logText
+   * @since 0.4.0
+   * @return {string} text log
+   */
+  getText() {
+    const text = this.logText()
+    return text === OFF ? '' : text
+  },
+  /**
+   * @alias logData
+   * @since 0.4.0
+   * @return {any}
+   */
+  getData() {
+    const data = this.logData()
+    return data === OFF ? undefined : data
+  },
+
+  /**
+   * @since 0.2.0
    * @tutorial https://github.com/fliphub/fliplog#return
    * @return {ReturnVals}
    */
