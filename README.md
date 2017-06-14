@@ -346,7 +346,7 @@ log
 
 ## ⚖️ diff
 
-![https://github.com/avajs/ava/raw/master/media/magic-assert-combined.png]
+![ava-diff](https://github.com/avajs/ava/raw/master/media/magic-assert-combined.png)
 (_uses a fork of [ava-format][ava-format] which is a fork of [jest-diff][jest-diff] which is a fork of [google's diff-match-patch][diff-match-patch]_)
 
 Compare two pieces of data. Data will be cloned so it can be mutated if needed, and then compared.
