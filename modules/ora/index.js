@@ -1,7 +1,7 @@
-const chalk = require('chalk')
+const chalk = require('../')('chalk')
 const logSymbols = require('../log-symbols')
-const cliCursor = require('./cli-cursor')
-const cliSpinners = require('./cli-spinners')
+const cliCursor = require('../cli-cursor')
+const cliSpinners = require('../cli-spinners')
 
 class Ora {
   constructor(options) {

@@ -1,16 +1,16 @@
-var isBuffer = require('../')('is-buffer')
+// https://www.npmjs.com/package/kind-of
 var toString = Object.prototype.toString
 
 /**
- * Get the native `typeof` a value.
- *
- * @param  {*} `val`
- * @return {*} Native javascript type
+ * @desc Get the native `typeof` a value.
+ * @param  {any} val
+ * @return {string} Native javascript type
  */
-
 module.exports = function kindOf(val) {
+  const vtypeof = typeof val
+
   // primitivies
-  if (typeof val === 'undefined') {
+  if (vtypeof === 'undefined') {
     return 'undefined'
   }
   if (val === null) {
@@ -19,15 +19,14 @@ module.exports = function kindOf(val) {
   if (val === true || val === false || val instanceof Boolean) {
     return 'boolean'
   }
-  if (typeof val === 'string' || val instanceof String) {
+  if (vtypeof === 'string' || val instanceof String) {
     return 'string'
   }
-  if (typeof val === 'number' || val instanceof Number) {
+  if (vtypeof === 'number' || val instanceof Number) {
     return 'number'
   }
-
   // functions
-  if (typeof val === 'function' || val instanceof Function) {
+  if (vtypeof === 'function' || val instanceof Function) {
     return 'function'
   }
 
@@ -42,6 +41,13 @@ module.exports = function kindOf(val) {
   }
   if (val instanceof Date) {
     return 'date'
+  }
+
+  if (val instanceof Set) {
+    return 'set'
+  }
+  if (val instanceof Map) {
+    return 'map'
   }
 
   // other objects
@@ -64,19 +70,18 @@ module.exports = function kindOf(val) {
   }
 
   // buffer
-  if (isBuffer(val)) {
+  if (
+    val != null &&
+    !!val.constructor &&
+    typeof val.constructor.isBuffer === 'function' &&
+    val.constructor.isBuffer(val)
+  ) {
     return 'buffer'
   }
 
   // es6: Map, WeakMap, Set, WeakSet
-  if (type === '[object Set]') {
-    return 'set'
-  }
   if (type === '[object WeakSet]') {
     return 'weakset'
-  }
-  if (type === '[object Map]') {
-    return 'map'
   }
   if (type === '[object WeakMap]') {
     return 'weakmap'
@@ -86,32 +91,12 @@ module.exports = function kindOf(val) {
   }
 
   // typed arrays
-  if (type === '[object Int8Array]') {
-    return 'int8array'
-  }
-  if (type === '[object Uint8Array]') {
-    return 'uint8array'
-  }
-  if (type === '[object Uint8ClampedArray]') {
-    return 'uint8clampedarray'
-  }
-  if (type === '[object Int16Array]') {
-    return 'int16array'
-  }
-  if (type === '[object Uint16Array]') {
-    return 'uint16array'
-  }
-  if (type === '[object Int32Array]') {
-    return 'int32array'
-  }
-  if (type === '[object Uint32Array]') {
-    return 'uint32array'
-  }
-  if (type === '[object Float32Array]') {
-    return 'float32array'
-  }
-  if (type === '[object Float64Array]') {
-    return 'float64array'
+  if (type.includes('Array') === true) {
+    return type
+      .replace('[', '')
+      .replace(']', '')
+      .replace('object ', '')
+      .toLowerCase()
   }
 
   // must be a plain object

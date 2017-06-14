@@ -1,7 +1,6 @@
 const {combinations} = require('../deps')
 
 module.exports = {
-
   /**
    * @desc decorate fliplog with color shorthands
    * @return {void}
@@ -70,25 +69,21 @@ module.exports = {
     if (typeof color === 'function') {
       logWrapFn = color
     }
-
-    // if there is no color, empty fn call
     else if (color === false || this.has('color') === false) {
+      // if there is no color, empty fn call
       logWrapFn = msg => msg
     }
-
-    // dot-prop access to chalk or xterm
     else if (color.includes('.')) {
-      color.split('.').forEach(clr => logWrapFn = logWrapFn[clr])
+      // dot-prop access to chalk or xterm
+      color.split('.').forEach(clr => (logWrapFn = logWrapFn[clr]))
     }
-
-    // when in all combinations, then call the corresponding fn
     else if (combinations.includes(color)) {
+      // when in all combinations, then call the corresponding fn
       logWrapFn = logWrapFn[color]
     }
-
-    // fallback style
-    // otherwise if the fn has a method with the name of the color
     else if (logWrapFn[color]) {
+      // fallback style
+      // otherwise if the fn has a method with the name of the color
       logWrapFn = logWrapFn[color]
     }
 
@@ -102,7 +97,15 @@ module.exports = {
    * @return {string} returns msg with timestamp if needed
    */
   getTime(msg) {
-    if (this.has('time') === true && this.get('time') === true) {
+    if (this.has('time') === false) {
+      return msg
+    }
+
+    const time = this.get('time')
+    const hasTime = time !== false
+
+    if (hasTime) {
+      const color = typeof time === 'string' ? time : 'yellow'
       const chalk = this.requirePkg('chalk')
 
       const data = new Date()
@@ -115,9 +118,10 @@ module.exports = {
       hour = hour < 10 ? `0${hour}` : hour
       min = min < 10 ? `0${min}` : min
       sec = sec < 10 ? `0${sec}` : sec
-      ms = ms < 10 ? `0${sec}` : ms
+      // ms = ms < 10 ? `0${sec}` : ms
 
-      return chalk.yellow(`${min}:${sec}:${ms}: `) + msg
+      // ${ms}:
+      return chalk[color](`${hour}:${min}:${sec}: `) + msg
     }
 
     return msg

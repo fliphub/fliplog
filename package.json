@@ -5,7 +5,7 @@
     "latest"
   ],
   "name": "fliplog",
-  "version": "0.3.0-beta.5",
+  "version": "0.3.9",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [
@@ -47,7 +47,7 @@
   ],
   "scripts": {
     "test": "node ./test/examples && node ./test/test",
-    "test-all": "node ./test/examples && node ./test/test && node test/boxen && node test/filter && node test/progress && node test/slow && node test/formatter && node test/from && node test/pretty && node test/diff && node test/dept && node test/quick",
+    "test-all": "node ./test/examples && node ./test/test && node test/boxen && node test/filter && node test/progress && node test/slow && node test/formatter && node test/from && node test/pretty && node test/diff && node test/dept && node test/write && node test/quick",
     "_prepublish": "echo {} > ./deps/cache.json",
     "_magicpublish": "node ./dynamicTags.js",
     "_postinstall": "node ./index.js --postinstallcall",

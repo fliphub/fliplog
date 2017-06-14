@@ -19,6 +19,34 @@
 ![Screenshot](https://cloud.githubusercontent.com/assets/4022631/24160506/46c47d34-0e1f-11e7-8c27-4b653330ae02.png)
 
 
+------- new ------
+- [ ] ansii
+- [ ] prettyformat
+- [ ] fmtobj
+- [ ] cleaner
+- [ ] chalk
+- [ ] .colored
+- [ ] prettysize
+- [ ] catchAndThrow
+- [ ] listr
+```js
+var obj = {property: {}}
+obj.circularReference = obj
+obj[Symbol('foo')] = 'foo'
+obj.map = new Map()
+obj.map.set('prop', 'value')
+obj.array = [1, NaN, Infinity]
+
+log.prettyformat(obj).echo()
+
+const cleaner = log
+  .cleaner(true)
+  .keys([/array|circularReference|map|property/])
+  .data(obj)
+  .clean()
+  .echo()
+```
+
 ## usage
 ```bash
 yarn add fliplog

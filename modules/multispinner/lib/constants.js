@@ -4,8 +4,8 @@
 // Modules
 //----------------------------------------------------------
 // NPM
-const logUpdate = require('log-update')
-const figures = require('figures')
+const logUpdate = require('../../log-update')
+const figures = require('../../figures')
 
 //----------------------------------------------------------
 // Constants

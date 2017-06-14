@@ -15,6 +15,23 @@ function presetImportant(chain) {
   return chain.text('❗  important:').color('red.bold')
 }
 
+function presetHidden(chain) {
+  /* prettier-ignore */
+  const allKeys = obj =>
+    Object
+      .getOwnPropertyNames(obj)
+      .concat(Object.getOwnPropertySymbols(obj))
+  // .concat(Object.keys(obj))
+
+  /* prettier-ignore */
+  const formatter = data =>
+    allKeys(Object.getPrototypeOf(data))
+    .concat(allKeys(data))
+    .map(key => ({[key]: Object.getOwnPropertyDescriptor(data, key)}))
+
+  return chain.verbose(100).formatter(formatter)
+}
+
 module.exports = {
   reset() {
     this.addPreset('error', presetError)
@@ -22,6 +39,7 @@ module.exports = {
     this.addPreset('info', presetInfo)
     this.addPreset('note', presetNote)
     this.addPreset('important', presetImportant)
+    this.addPreset('desc', presetHidden)
   },
 
   /**

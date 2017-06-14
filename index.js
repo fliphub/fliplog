@@ -34,6 +34,9 @@ let scoped = {}
  *    continue
  */
 
+// const {compose} = require('chain-able')
+// const ChainedMapExtendable = compose({extend: true})
+
 class LogChain extends ChainedMapExtendable {
   /**
    * @param  {any} parent
@@ -47,6 +50,7 @@ class LogChain extends ChainedMapExtendable {
     this.extend(['title', 'color'])
     this.extendTrue(['space', 'tosource', 'time', 'silent'])
 
+    this.set('logger', console.log)
     this.resets = []
     this.presets = {}
     this.log = this.echo
@@ -386,6 +390,19 @@ class LogChain extends ChainedMapExtendable {
   }
 
   /**
+   * @see https://stackoverflow.com/questions/4976466/difference-between-process-stdout-write-and-console-log-in-node-js
+   * @since 0.3.1
+   * @desc set the logger to be process.stdout instead of console.log
+   * @param  {boolean} [data=OFF] `false` will make it not output
+   * @return {FlipLog} @chainable
+   */
+  stdout(data = OFF) {
+    this.set('logger', process.stdout.write.bind(process.stdout))
+    // this._stdout.write(require('util').format.apply(this, arguments) + '\n')
+    return this.echo(data)
+  }
+
+  /**
    * @since 0.3.0
    * @see this.echo, this.finalize, this.logText, this.logData, this.reset
    * @desc the actual internal `console.log`ing
@@ -396,6 +413,7 @@ class LogChain extends ChainedMapExtendable {
     this.finalize()
     const text = this.logText()
     const datas = this.logData()
+    const logger = this.get('logger') || console.log
 
     // check whether the values are default constant OFF
     // so that when we log, they can be on the same console.log call
@@ -405,19 +423,19 @@ class LogChain extends ChainedMapExtendable {
     }
     // text and no data
     if (datas !== OFF && text === OFF) {
-      console.log(datas)
+      logger(datas)
     }
     else if (datas === OFF && text !== OFF) {
       // no data, just text
-      console.log(text)
+      logger(text + '')
     }
     else if (datas !== OFF && text !== OFF) {
-      console.log(text, datas)
+      logger(text + '', datas)
     }
 
     if (this.has('spaces') === true) {
       const spaces = this.logSpaces()
-      if (spaces !== '') console.log(spaces)
+      if (spaces !== '') logger(spaces)
     }
 
     // timer.stop('echo-new').log('echo-new')
