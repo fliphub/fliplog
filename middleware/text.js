@@ -37,7 +37,7 @@ module.exports = {
   getColored(msg) {
     const logWrapFn = this.getLogWrapFn()
 
-    if (this.get('text')) return `${logWrapFn(msg)}`
+    if (this.get('text')) return '' + logWrapFn(msg)
     let text = logWrapFn(this.get('text'))
     if (text) text += ':'
 
@@ -63,6 +63,10 @@ module.exports = {
     // variable
     if (color === null) {
       color = this.get('color')
+    }
+
+    if (this.has('colorer')) {
+      return this.get('colorer').call(this, color, this)
     }
 
     // maybe we colored with something not in chalk, like xterm
