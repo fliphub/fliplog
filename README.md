@@ -18,7 +18,7 @@
 
 ![Screenshot](https://cloud.githubusercontent.com/assets/4022631/24160506/46c47d34-0e1f-11e7-8c27-4b653330ae02.png)
 
-[deepdiff]: https://www.npmjs.com/package/deep-diff
+[deep-diff]: https://www.npmjs.com/package/deep-diff
 [fmtobj]: https://github.com/queckezz/fmt-obj
 [sprintf]: https://github.com/alexei/sprintf.js
 [prettyformat]: https://github.com/facebook/jest/tree/master/packages/pretty-format
