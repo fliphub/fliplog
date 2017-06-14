@@ -1,10 +1,12 @@
 const interoplateRegExp = /%[sdj%]/g
-
+const {OFF} = require('../deps')
 // https://coderwall.com/p/blti_w/dumb-javascript-string-interpolation
 // https://nodejs.org/api/util.html#util_util_format_format
 // https://github.com/knowledgecode/fast-format
 // http://stringjs.com/
 // https://github.com/alexei/sprintf.js
+
+const isOFF = x => x === OFF || (/undefined/).test(x)
 
 module.exports = {
   reset() {
@@ -20,8 +22,10 @@ module.exports = {
     if (text !== null) this.text(text)
 
     return this
-    .set('textFormatter', txt => this.requirePkg('strip-ansi')(txt))
-    .set('colorer', color => txt => this.requirePkg('strip-ansi')(txt))
+      .set('textFormatter', txt =>
+        isOFF(txt) ? OFF : this.requirePkg('strip-ansi')(txt))
+      .set('colorer', color => txt =>
+        isOFF(txt) ? OFF : this.requirePkg('strip-ansi')(txt))
   },
 
   /**

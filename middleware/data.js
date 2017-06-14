@@ -281,7 +281,7 @@ module.exports = {
         if (data !== OFF) return data
       }
 
-      msg = inspector(msg, this.get('verbose'))
+      msg = inspector(msg, this.get('verbose'), this.get('argv.inspector'))
     }
 
     return msg
