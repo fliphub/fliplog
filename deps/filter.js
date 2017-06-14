@@ -17,7 +17,6 @@ function tagPasses(tags, filter, not) {
   return true
 }
 
-
 // pass in tags & instance here just for fn filter
 function shouldFilter({filters, tags, checkTags, instance}) {
   const hasStarFilter = filters.includes('*')
@@ -37,14 +36,18 @@ function shouldFilter({filters, tags, checkTags, instance}) {
       // whereas we are checking if it *should* be filtered OUT
       // and so it needs to return `false` to say it should be allowed :s
       // whitelist vs blacklist
-      shouldBeFiltered = filter(Object.assign(instance.entries(), {
-        tags,
-        checkTags,
-        debugs,
-        index,
-        filters,
-      }))
-      if (shouldBeFiltered === false) shouldBeFiltered = true
+      shouldBeFiltered = filter(
+        Object.assign(instance.entries(), {
+          tags,
+          checkTags,
+          debugs,
+          index,
+          filters,
+        })
+      )
+      if (shouldBeFiltered === true) shouldBeFiltered = false
+      else if (shouldBeFiltered === false) shouldBeFiltered = true
+      else if (shouldBeFiltered === null) shouldBeFiltered = true
       return shouldBeFiltered
     }
 
