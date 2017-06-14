@@ -28,6 +28,11 @@ log.bold('========= inspector ========').echo()
 log.factory().verbose(100).data(obj).echo()
 console.log('\n')
 
+log.bold('========= prettyobj ========').echo()
+
+log.factory().verbose(100).prettyobj(obj).echo()
+console.log('\n')
+
 log.bold('========= preset(desc) ========').echo()
 
 log.preset('desc').data(obj).echo()
@@ -37,6 +42,7 @@ console.log('\n')
 console.log('\n')
 log.bold('========= cleaned obj ========').echo()
 
+// @TODO: put on its own file
 // @NOTE: this mutates!
 // CHAIN BACK UP TO LOG
 const cleaner = log
