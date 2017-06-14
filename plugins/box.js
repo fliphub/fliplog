@@ -39,10 +39,11 @@ module.exports = {
     if (boxen === false) {
       return this
     }
+    let opts = options || this.get('boxStyles')
 
-    const box = boxen(input, options || this.get('boxStyles'))
+    const box = boxen(input, opts)
 
-    if (options && options.default === true) {
+    if (opts && opts.default === true) {
       this.text(box)
     }
     else {

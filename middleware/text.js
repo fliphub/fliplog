@@ -7,8 +7,9 @@ module.exports = {
    */
   init() {
     combinations.forEach(color => {
-      this[color] = text => {
-        return this.color(color).text(text)
+      this[color] = (text = null) => {
+        if (text !== null) this.text(text)
+        return this.color(color)
       }
     })
   },
