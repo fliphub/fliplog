@@ -148,7 +148,13 @@ module.exports = chain => {
      */
     filter(filters) {
       toarr = toarr ? toarr : require('chain-able/deps/to-arr')
-      const filter = filterFactory(filters)
+      let filter = toarr(filters)
+
+      // @NOTE: keeps some maintainability with the old since desc is string, arr, of fn
+      if (filter.length <= 1) {
+        filter = filterFactory(filters)
+      }
+      
       const merged = toarr(filter).concat(this.get('filter') || [])
 
       // would need a double tap...

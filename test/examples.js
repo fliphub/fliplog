@@ -1,29 +1,29 @@
 const log = require('../')
 
-const factoried = log.factory()
-
-const dirMatch = new RegExp(__dirname, 'gmi')
-const logger = (text, data) => {
-  const clean = log
-    .cleaner(true)
-    .vals([dirMatch, x => typeof x === 'string'])
-    .keys([dirMatch])
-    .onMatch((arg, traverser) => arg.replace(dirMatch, 'funfunfun!'))
-    .onNonMatch(arg => {
-      // console.log({arg}, 'nonmatch')
-    })
-    .data({data, text})
-    .clean()
-
-  const cleaned = clean.cleaned()
-  console.log(cleaned.text, cleaned.data)
-}
-
-log
-  .preset('error')
-  .data(new Error('prettyfull!'))
-  .set('logger', logger)
-  .echo()
+// const factoried = log.factory()
+//
+// const dirMatch = new RegExp(__dirname, 'gmi')
+// const logger = (text, data) => {
+//   const clean = log
+//     .cleaner(true)
+//     .vals([dirMatch, x => typeof x === 'string'])
+//     .keys([dirMatch])
+//     .onMatch((arg, traverser) => arg.replace(dirMatch, 'funfunfun!'))
+//     .onNonMatch(arg => {
+//       // console.log({arg}, 'nonmatch')
+//     })
+//     .data({data, text})
+//     .clean()
+//
+//   const cleaned = clean.cleaned()
+//   console.log(cleaned.text, cleaned.data)
+// }
+//
+// log
+//   .preset('error')
+//   .data(new Error('prettyfull!'))
+//   .set('logger', logger)
+//   .echo()
 
 function traceIt() {
   function stackIt() {
@@ -47,7 +47,6 @@ function traceIt() {
   stackIt()
 }
 traceIt()
-process.exit()
 
 log
   .text('\n========================================\n')

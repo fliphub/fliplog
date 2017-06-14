@@ -60,18 +60,26 @@ const planner = new Chain()
         }
       }
 
-      setTimeout(cb, this.get('timeout'))
+      this.timeoutcb = cb
+      this.resetTimeout = () => {
+        clearTimeout(this.timeouts)
+        this.timeouts = setTimeout(cb, this.get('timeout'))
+      }
+
+      this.resetTimeout()
       return this.set('plan', times)
     },
     assert(assertion) {
       const assertions = toArr(assertion).map(powerAssert)
-      return this.tap('assertions', arr => arr.concat(assertions))
+      return this
+        .tap('assertions', arr => arr.concat(assertions))
+        .wrap(() => this.resetTimeout)
     },
   })
 
 // log.data(planner.plan()).exit()
 
-planner.timeout(1000).plan(3)
+// planner.timeout(1).plan(3)
 
 log.filter(args => {
   if (planner.getAssertions().length === 2) {
