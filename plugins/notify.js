@@ -7,6 +7,7 @@ module.exports = {
    * @tutorial https://github.com/fliphub/fliplog#-notify
    * @tutorial https://github.com/mikaelbr/node-notifier
    * @todo alias as notification/notify
+   * @TODO: put as formatter
    *
    * @param  {string | boolean | any}  options
    * @param  {any}  [msg=null]

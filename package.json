@@ -5,7 +5,7 @@
     "latest"
   ],
   "name": "fliplog",
-  "version": "0.3.9",
+  "version": "1.0.2",
   "main": "index.js",
   "description": "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets",
   "keywords": [
@@ -29,8 +29,6 @@
   ],
   "files": [
     "index.js",
-    "config.js",
-    "tagged.js",
     "deps/",
     "middleware/",
     "plugins/",
@@ -47,7 +45,7 @@
   ],
   "scripts": {
     "test": "node ./test/examples && node ./test/test",
-    "test-all": "node ./test/examples && node ./test/test && node test/boxen && node test/filter && node test/progress && node test/slow && node test/formatter && node test/from && node test/pretty && node test/diff && node test/dept && node test/write && node test/quick",
+    "test-all": "node ./test/examples && node ./test/test && node test/boxen && node test/filter && node test/progress && node test/slow && node test/formatter && node test/from && node test/pretty && node test/diff && node test/dept && node test/write && node test/fun && node test/quick",
     "_prepublish": "echo {} > ./deps/cache.json",
     "_magicpublish": "node ./dynamicTags.js",
     "_postinstall": "node ./index.js --postinstallcall",
@@ -63,7 +61,7 @@
     "read-pkg-up": "2.0.0"
   },
   "dependencies": {
-    "chain-able": "^1.0.1"
+    "chain-able": "3.0.0"
   },
   "license": "MIT",
   "author": "James <aretecode@gmail.com>",

@@ -7,6 +7,9 @@ obj.map = new Map()
 obj.map.set('prop', 'value')
 obj.array = [1, NaN, Infinity]
 
+// log.bold('========= console ========').echo()
+// console.log(obj)
+//
 // console.log(require('pretty-format')(obj))
 // console.log(log)
 // log.quick(log)
@@ -19,10 +22,28 @@ log.bold('========= fmtobj ========').echo()
 const l = log.fmtobj(obj).echo()
 // log.quick(l.entries())
 
+console.log('\n')
+log.bold('========= inspector ========').echo()
+
+log.factory().verbose(100).data(obj).echo()
+console.log('\n')
+
+log.bold('========= prettyobj ========').echo()
+
+log.factory().verbose(100).prettyobj(obj).echo()
+console.log('\n')
+
+log.bold('========= preset(desc) ========').echo()
+
+log.preset('desc').data(obj).echo()
+console.log('\n')
+
 // log.data(log.cleaner()).exit()
 console.log('\n')
 log.bold('========= cleaned obj ========').echo()
 
+// @TODO: put on its own file
+// @NOTE: this mutates!
 // CHAIN BACK UP TO LOG
 const cleaner = log
   .cleaner(true)
@@ -31,21 +52,16 @@ const cleaner = log
   .clean()
   .echo()
 
-console.log('\n')
-log.bold('========= inspector ========').echo()
-
-log.verbose(10).data(obj).echo()
-console.log('\n')
-
 // console.log('\n\n')
 log.bold('========= prettyjson ========').echo()
 
 // CAN'T REALLY stringify this to json
 const cheat = {
-  property: {},
-  map: {prop: 'value'},
-  array: [1, NaN, Infinity],
-  foo: 'foo',
+  'property': {},
+  'map': {prop: 'value'},
+  'Symbol(\'foo\')': 'foo',
+  'array': [1, NaN, Infinity],
+  'foo': 'foo',
 }
 // cheat.circularReference = cheat
 

@@ -27,6 +27,7 @@ const spinners = require('./spinners')
 // const story = require('./story')
 const stringify = require('./stringify')
 const table = require('./formatter')
+const templates = require('./text')
 const time = require('./time')
 const timer = require('./timer')
 const track = require('./track')
@@ -62,6 +63,7 @@ module.exports = {
   spinners,
   stringify,
   table,
+  templates,
   time,
   timer,
   track,

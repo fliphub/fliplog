@@ -8,7 +8,7 @@ const eh = {
         super: false,
         not: 'eh',
         canada: true,
-        modules: [{ parser: 'hi' }],
+        modules: [{parser: 'hi'}],
       },
       matchme: 'minime',
       notme: 'eh',

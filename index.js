@@ -1,5 +1,5 @@
-const ChainedMapExtendable = require('chain-able/ChainedMapExtendable')
-const {OFF, objToStr} = require('./deps')
+const ChainedMapExtendable = require('chain-able')
+const {OFF, objToStr, isFunctionWithNoKeys} = require('./deps')
 const pluginObjs = Object.assign(require('./plugins'), require('./middleware'))
 
 const shh = {
@@ -44,11 +44,11 @@ class LogChain extends ChainedMapExtendable {
   constructor(parent) {
     super(parent)
     delete this.inspect
-    this.version = '0.3.0'
+    this.version = '0.3.14'
 
     // this extending is 0microseconds
     this.extend(['title', 'color'])
-    this.extendTrue(['space', 'tosource', 'time', 'silent'])
+    this.extendWith(['space', 'tosource', 'time', 'silent'], true)
 
     this.set('logger', console.log)
     this.resets = []
@@ -130,6 +130,7 @@ class LogChain extends ChainedMapExtendable {
     // warn and safely handle missing pkgs
     if (!dep) {
       const colored = this.colored(name)
+      // @NOTE: IGNORING THIS
       this.text('did not have package ' + colored)
         .data(`npm i ${colored} --save-dev \n yarn add ${colored} --dev`)
         .echo()
@@ -150,8 +151,8 @@ class LogChain extends ChainedMapExtendable {
    * @return {FlipLog}
    */
   use(obj) {
-    if (typeof obj === 'function' && Object.keys(obj).length === 0) {
-      obj = obj(this)
+    if (isFunctionWithNoKeys(obj)) {
+      obj = obj.call(this, this)
     }
 
     if (this.deps === undefined) {
@@ -403,16 +404,17 @@ class LogChain extends ChainedMapExtendable {
   }
 
   /**
+   * @rename @since 0.4.0 echoConsole -> forceEcho
    * @since 0.3.0
    * @see this.echo, this.finalize, this.logText, this.logData, this.reset
    * @desc the actual internal `console.log`ing
    * @return {FlipLog} @chainable
    */
-  echoConsole() {
+  forceEcho() {
     // so we can have them on 1 line
     this.finalize()
-    const text = this.logText()
     const datas = this.logData()
+    const text = this.logText()
     const logger = this.get('logger') || console.log
 
     // check whether the values are default constant OFF
@@ -430,7 +432,18 @@ class LogChain extends ChainedMapExtendable {
       logger(text + '')
     }
     else if (datas !== OFF && text !== OFF) {
-      logger(text + '', datas)
+      if ((/\n|\r/gmi).test(text)) {
+        if (logger === console.log) {
+          logger(text + '')
+          logger(datas)
+        }
+        else {
+          logger(text + '', datas)
+        }
+      }
+      else {
+        logger(text + '', datas)
+      }
     }
 
     if (this.has('spaces') === true) {
@@ -444,6 +457,32 @@ class LogChain extends ChainedMapExtendable {
   }
 
   /**
+   * @TODO: needs thought whether to return or to echo...
+   *        since `+` is shorter to echo
+   *
+   * @alias log
+   * @alias echo
+   * @since 0.4.0
+   * @return {string} log output
+   */
+  // toString() {
+  //   return this.echo()
+  // }
+
+  /**
+   * @desc echos, then returns
+   * @example log.bold('eh').data({})+
+   * @alias echo
+   * @alias log
+   * @return {number} 0 if silent, 1 if success
+   */
+  toNumber() {
+    this.echo()
+    return shh.shushed === true || this.has('silent') === true ? 0 : 1
+  }
+
+  /**
+   * @alias toString
    * @alias log
    * @since 0.0.1
    * @param  {boolean} [data=OFF] `false` will make it not output
@@ -457,6 +496,8 @@ class LogChain extends ChainedMapExtendable {
       this.stack()
     }
 
+    // data !== 'force' &&
+    /* prettier-ignore */
     if (this.has('tags') === true || this.has('filter') === true) {
       this._filter()
     }
@@ -488,7 +529,7 @@ class LogChain extends ChainedMapExtendable {
       this.sleepIfNeeded()
     }
 
-    return this.echoConsole()
+    return this.forceEcho()
   }
 
   /**
@@ -503,6 +544,23 @@ class LogChain extends ChainedMapExtendable {
     if (this.has('formatter') === true) {
       arg = this.get('formatter')(arg)
     }
+
+    // @TODO: don't forget about ansi...
+    if (this.has('textFormatter') === true) {
+      let txt = this.get('text')
+      let text = txt
+      let title = ''
+      if (this.has('title')) {
+        title = this.get('title')
+        text = title + txt
+        this.delete('title')
+      }
+
+      text = this.get('textFormatter').call(this, text, this)
+      this.set('text', text)
+      this.delete('textFormatter')
+    }
+
     return this.set('data', arg)
   }
 

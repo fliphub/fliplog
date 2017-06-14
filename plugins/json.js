@@ -1,12 +1,21 @@
+const getDefaults = () => {
+  return {
+    keysColor: 'blue',
+    dashColor: 'yellow',
+    stringColor: 'italic',
+    numberColor: 'green',
+  }
+}
 module.exports = {
   // deps: {
   //   'prettyjson': '1.2.1',
   // },
 
   prettyjson(data = null, opts = {}) {
+    const options = Object.assign(getDefaults(), opts)
     const prettyjson = this.requirePkg('prettyjson') // eslint-disable-line
     if (data !== null) {
-      return prettyjson.render(data, opts)
+      return prettyjson.render(data, options)
     }
     return prettyjson
   },
@@ -22,14 +31,7 @@ module.exports = {
       return this.data(data).verbose(5)
     }
 
-    const defaults = {
-      keysColor: 'blue',
-      dashColor: 'yellow',
-      stringColor: 'italic',
-      numberColor: 'green',
-    }
-
-    opts = Object.assign(defaults, opts)
+    opts = Object.assign(getDefaults(), opts)
 
     // return this.data(this.prettyjson().render(data, opts))
     return this.formatter(() => this.prettyjson().render(data, opts)).data(data)

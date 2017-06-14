@@ -1,4 +1,3 @@
-
 /**
  * @tutorial https://github.com/lukeed/obj-str
  * @param  {Object} obj
@@ -14,7 +13,6 @@ function objToStr(obj) {
   }
   return cls
 }
-
 
 // https://github.com/npm/npmlog
 // http://tostring.it/2014/06/23/advanced-logging-with-nodejs/
@@ -52,28 +50,34 @@ const xtermByName = {
     orange: 236,
   },
 }
-const psr3 = [
-  'emergency',
-  'alert',
-  'critical',
-  'error',
-  'warning',
-  'notice',
-  'warning',
-  'debug',
-]
+// const psr3 = [
+//   'emergency',
+//   'alert',
+//   'critical',
+//   'error',
+//   'warning',
+//   'notice',
+//   'warning',
+//   'debug',
+// ]
 
 const combinations = clrs.concat(bgColors).concat(em)
 
 // https://www.youtube.com/watch?v=SwSle66O5sU
 const OFF = `${~315 >>> 3}@@`
 
+const isFunctionWithNoKeys = obj =>
+  typeof obj === 'function' && Object.keys(obj).length === 0
+
+const matcher = require('./matcher')
 
 module.exports = {
+  matcher,
+  isFunctionWithNoKeys,
   combinations,
   OFF,
   bgColors,
-  psr3,
+  // psr3,
   xtermByName,
   objToStr,
 }

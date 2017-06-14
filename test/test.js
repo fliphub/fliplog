@@ -6,37 +6,57 @@ const log = require('../')
 // console.assert(log.savedLog.length > 0, 'has saved logs')
 // process.exit()
 
-log.filter('!args,has,!alien')
+// log.filter('!args,!alien,has')
+// log.filter(['ehoh,!args,!alien,has'])
 
-const arg1 = log
-.tags('args')
-.text('args')
-.return()
+// @NOTE: to avoid overhead of cloning,
+// these do have ref to each other so assertions needed to be earlier
+function testLog(_log) {
+  const arg1 = _log
+  .tags('args')
+  .text('args')
+  .return()
+  .silent
 
-const ehoh = log
-.tags('ehoh')
-.text('ehoh')
-.return()
+  console.log({arg1})
+  const ehoh = _log
+  .tags('ehoh')
+  .text('ehoh')
+  .return()
+  .silent
+  console.log({ehoh})
 
-const args2 = log
-.tags('args')
-.text('args')
-.return()
+  const args2 = _log
+  .tags('args')
+  .text('args')
+  .return()
+  .silent
+  console.log({args2})
+  const has = _log
+  .tags('has')
+  .text('has')
+  .return()
+  .silent
+  console.log(has)
+  const alien = _log
+  .tags('alien')
+  .text('alien')
+  .return()
+  .silent
+  console.log(alien)
 
-const has = log
-.tags('has')
-.text('has')
-.return()
+  console.assert(arg1 === true, 'filtered is ignored')
+  console.assert(ehoh !== true, 'non filtered is output')
+  console.assert(has !== true, 'non filtered is output')
+  console.assert(args2 === true, 'filtered is ignored after logging a non-filtered')
+  console.assert(alien === true, 'a second filtered is ignored')
+  console.log('all pass :-)')
+}
 
-const alien = log
-.tags('alien')
-.text('alien')
-.return()
+const log1 = log.factory()
+const log2 = log.factory()
+log1.filter('!args,!alien,has')
+log2.filter(['!args', 'has', '!alien', 'ehoh'])
 
-
-console.assert(arg1.silent === true, 'filtered is ignored')
-console.assert(ehoh.silent !== true, 'non filtered is output')
-console.assert(has.silent !== true, 'non filtered is output')
-console.assert(args2.silent === true, 'filtered is ignored after logging a non-filtered')
-console.assert(alien.silent === true, 'a second filtered is ignored')
-console.log('all pass :-)')
+testLog(log1)
+testLog(log2)

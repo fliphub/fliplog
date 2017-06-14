@@ -22,9 +22,17 @@ module.exports = function requireFromDepIfPossible(name) {
 
   try {
     require.resolve(name)
-    return require(name)
+    const required = require(name)
+    if (required) return required
+    else throw Error('not required')
   }
   catch (e) {
-    return require('./' + name)
+    try {
+      const dep = require('./' + name)
+      return dep
+    }
+    catch (noModule) {
+      return false
+    }
   }
 }
