@@ -66,7 +66,7 @@ fluent logging with verbose insight, colors, tables, emoji, deep cleaning, filte
 - [☕ filtering](#-filtering)
   - [🔢 level](#-level)
   - [🎯 matcher](#-matcher)
-  - [🚩 flags](#filter-tags)
+  - [🚩 flags](#tags)
   - [filter](#filter--tags)
   - [tags](#filter--tags)
 - [🛑 quick](#-quick)
@@ -305,13 +305,13 @@ log
   .echo()
 ```
 
-### 🚩 flags
+## 🚩 flags
 
-this can also be done using cli flags
+this can also be done using cli flags [compat with debug flags](https://github.com/fliphub/fliplog/issues/22)
 
 ```bash
-yourprogram --flipdebug="!nope,yes"
-yourprogram --flipdebug=verbose
+yourprogram --DEBUG="!nope,yes"
+yourprogram --DEBUG=verbose
 ```
 
 ## 🛑 quick
